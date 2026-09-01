@@ -9,330 +9,193 @@ import {
 } from "react-native";
 
 export default function SplashScreen({ navigation }: any) {
-  // ==========================================
-  // ANIMAÇÕES
-  // ==========================================
+  const opacity = useRef(new Animated.Value(0)).current;
+  const scale = useRef(new Animated.Value(0.82)).current;
+  const translateY = useRef(new Animated.Value(35)).current;
 
-  const logoOpacity = useRef(new Animated.Value(0)).current;
-  const logoTranslate = useRef(new Animated.Value(60)).current;
-  const logoScale = useRef(new Animated.Value(0.85)).current;
-
-  const routeProgress = useRef(new Animated.Value(0)).current;
-
-  const planeX = useRef(new Animated.Value(0)).current;
-  const planeY = useRef(new Animated.Value(0)).current;
-
-  const glowOpacity = useRef(new Animated.Value(0)).current;
-
-  const textOpacity = useRef(new Animated.Value(0)).current;
-  const textTranslate = useRef(new Animated.Value(15)).current;
+  const lightX = useRef(new Animated.Value(-1)).current;
+  const lineWidth = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // ==========================================
-    // ENTRADA DA LOGO
-    // ==========================================
-
     Animated.parallel([
-      Animated.timing(logoOpacity, {
+      Animated.timing(opacity, {
         toValue: 1,
         duration: 900,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
 
-      Animated.spring(logoScale, {
+      Animated.spring(scale, {
         toValue: 1,
         friction: 7,
         tension: 45,
         useNativeDriver: true,
       }),
 
-      Animated.timing(logoTranslate, {
+      Animated.timing(translateY, {
         toValue: 0,
         duration: 900,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
 
-      Animated.timing(glowOpacity, {
+      Animated.timing(lineWidth, {
         toValue: 1,
-        duration: 1200,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    // ==========================================
-    // TEXTO
-    // ==========================================
-
-    Animated.parallel([
-      Animated.timing(textOpacity, {
-        toValue: 1,
-        duration: 800,
-        delay: 700,
-        useNativeDriver: true,
-      }),
-
-      Animated.timing(textTranslate, {
-        toValue: 0,
-        duration: 800,
-        delay: 700,
+        duration: 1300,
+        delay: 400,
         easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
-    ]).start();
 
-    // ==========================================
-    // ROTA DO AVIÃO
-    // ==========================================
-
-    Animated.timing(routeProgress, {
-      toValue: 1,
-      duration: 2200,
-      delay: 300,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: false,
-    }).start();
-
-    // ==========================================
-    // MOVIMENTO DO AVIÃO
-    // ==========================================
-
-    Animated.parallel([
-      Animated.timing(planeX, {
+      Animated.timing(lightX, {
         toValue: 1,
-        duration: 2200,
-        delay: 300,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }),
-
-      Animated.timing(planeY, {
-        toValue: -1,
-        duration: 2200,
+        duration: 1800,
         delay: 300,
         easing: Easing.inOut(Easing.ease),
         useNativeDriver: true,
       }),
     ]).start();
-
-    // ==========================================
-    // IR PARA LOGIN
-    // ==========================================
 
     const timer = setTimeout(() => {
       navigation.replace("Login");
-    }, 3200);
+    }, 7000);
 
     return () => {
       clearTimeout(timer);
     };
   }, [navigation]);
 
-  // ==========================================
-  // POSIÇÃO DO AVIÃO
-  // ==========================================
-
-  const airplaneTranslateX = planeX.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-120, 120],
+  const lightTranslate = lightX.interpolate({
+    inputRange: [-1, 1],
+    outputRange: [-450, 450],
   });
 
-  const airplaneTranslateY = planeY.interpolate({
-    inputRange: [-1, 0],
-    outputRange: [-35, 35],
-  });
-
-  // ==========================================
-  // ROTA ANIMADA
-  // ==========================================
-
-  const routeWidth = routeProgress.interpolate({
+  const animatedLineWidth = lineWidth.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 240],
+    outputRange: ["0%", "100%"],
   });
 
   return (
     <View style={styles.container}>
 
-      {/* ======================================
-          FUNDO
-      ======================================= */}
+      <View style={styles.gradientBase} />
 
-      <View style={styles.backgroundTop} />
-      <View style={styles.backgroundBottom} />
+      <View style={styles.blueGlow} />
 
-      {/* ======================================
-          ESTRELAS / PARTÍCULAS
-      ======================================= */}
-
-      <View style={[styles.star, styles.star1]} />
-      <View style={[styles.star, styles.star2]} />
-      <View style={[styles.star, styles.star3]} />
-      <View style={[styles.star, styles.star4]} />
-      <View style={[styles.star, styles.star5]} />
-      <View style={[styles.star, styles.star6]} />
-
-      {/* ======================================
-          TEXTO SUPERIOR
-      ======================================= */}
-
-      <Animated.Text
-        style={[
-          styles.topLabel,
-          {
-            opacity: textOpacity,
-          },
-        ]}
-      >
-        SUA PRÓXIMA JORNADA
-      </Animated.Text>
-
-      {/* ======================================
-          ROTA
-      ======================================= */}
-
-      <View style={styles.routeContainer}>
-
-        {/* ponto inicial */}
-
-        <View style={styles.startPoint} />
-
-        {/* linha */}
-
-        <View style={styles.routeTrack}>
-          <Animated.View
-            style={[
-              styles.routeLine,
-              {
-                width: routeWidth,
-              },
-            ]}
-          />
-        </View>
-
-        {/* destino */}
-
-        <View style={styles.destinationPoint}>
-          <View style={styles.destinationInner} />
-        </View>
-
-        {/* avião */}
-
-        <Animated.View
-          style={[
-            styles.airplane,
-            {
-              transform: [
-                {
-                  translateX: airplaneTranslateX,
-                },
-                {
-                  translateY: airplaneTranslateY,
-                },
-                {
-                  rotate: "-18deg",
-                },
-              ],
-            },
-          ]}
-        >
-          <Text style={styles.airplaneIcon}>✈</Text>
-        </Animated.View>
-
-      </View>
-
-      {/* ======================================
-          BRILHO ATRÁS DA LOGO
-      ======================================= */}
+      <View style={styles.cyanGlow} />
 
       <Animated.View
         style={[
-          styles.glow,
+          styles.lightBeam,
           {
-            opacity: glowOpacity,
+            transform: [
+              {
+                translateX: lightTranslate,
+              },
+              {
+                rotate: "-25deg",
+              },
+            ],
           },
         ]}
       />
 
-      {/* ======================================
-          LOGO
-      ======================================= */}
+      <Animated.View
+        style={[
+          styles.topContent,
+          {
+            opacity,
+          },
+        ]}
+      >
+        <View style={styles.statusDot} />
+
+        <Text style={styles.topText}>
+          YOUR JOURNEY STARTS HERE
+        </Text>
+      </Animated.View>
 
       <Animated.View
         style={[
-          styles.logoContainer,
+          styles.logoArea,
           {
-            opacity: logoOpacity,
+            opacity,
             transform: [
               {
-                translateY: logoTranslate,
+                scale,
               },
               {
-                scale: logoScale,
+                translateY,
               },
             ],
           },
         ]}
       >
+
+        <View style={styles.logoGlow} />
+
         <Image
           source={require("../../assets/images/aeropasso.png")}
           style={styles.logo}
         />
-      </Animated.View>
 
-      {/* ======================================
-          TEXTO PRINCIPAL
-      ======================================= */}
+      </Animated.View>
 
       <Animated.View
         style={[
-          styles.textContainer,
+          styles.brandArea,
           {
-            opacity: textOpacity,
+            opacity,
             transform: [
               {
-                translateY: textTranslate,
+                translateY,
               },
             ],
           },
         ]}
       >
-        <Text style={styles.title}>
+
+        <Text style={styles.brand}>
           AeroPasso
         </Text>
 
-        <Text style={styles.subtitle}>
-          Viaje. Explore. Viva.
+        <Text style={styles.description}>
+          VIAJE DO SEU JEITO
         </Text>
+
       </Animated.View>
 
-      {/* ======================================
-          LOCALIZAÇÃO
-      ======================================= */}
+      <View style={styles.lineContainer}>
+
+        <Animated.View
+          style={[
+            styles.line,
+            {
+              width: animatedLineWidth,
+            },
+          ]}
+        />
+
+      </View>
 
       <Animated.View
         style={[
-          styles.locationContainer,
+          styles.footer,
           {
-            opacity: textOpacity,
+            opacity,
           },
         ]}
       >
-        <View style={styles.locationDot} />
 
-        <Text style={styles.locationText}>
-          DESTINO: O MUNDO
+        <Text style={styles.footerText}>
+          AEROPASSO
         </Text>
+
+        <Text style={styles.version}>
+          01
+        </Text>
+
       </Animated.View>
-
-      {/* ======================================
-          RODAPÉ
-      ======================================= */}
-
-      <Text style={styles.footer}>
-        PREPARANDO SUA EXPERIÊNCIA
-      </Text>
 
     </View>
   );
@@ -340,267 +203,153 @@ export default function SplashScreen({ navigation }: any) {
 
 const styles = StyleSheet.create({
 
-  // ==========================================
-  // CONTAINER
-  // ==========================================
-
   container: {
     flex: 1,
-    backgroundColor: "#07111F",
+    backgroundColor: "#050A12",
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
   },
 
-  // ==========================================
-  // FUNDO
-  // ==========================================
-
-  backgroundTop: {
+  gradientBase: {
     position: "absolute",
-    width: 500,
-    height: 500,
-    borderRadius: 250,
-    backgroundColor: "#123B62",
-    opacity: 0.18,
-    top: -300,
-    left: -200,
+    width: "130%",
+    height: "130%",
+    backgroundColor: "#071522",
+    transform: [
+      {
+        rotate: "-8deg",
+      },
+    ],
   },
 
-  backgroundBottom: {
+  blueGlow: {
     position: "absolute",
-    width: 600,
-    height: 600,
-    borderRadius: 300,
-    backgroundColor: "#006E9C",
-    opacity: 0.10,
-    bottom: -400,
-    right: -250,
+    width: 420,
+    height: 420,
+    borderRadius: 210,
+    backgroundColor: "#075B91",
+    opacity: 0.13,
+    top: -180,
+    right: -160,
   },
 
-  // ==========================================
-  // ESTRELAS
-  // ==========================================
-
-  star: {
+  cyanGlow: {
     position: "absolute",
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: "#BDEFFF",
-    opacity: 0.6,
+    width: 330,
+    height: 330,
+    borderRadius: 165,
+    backgroundColor: "#00D5FF",
+    opacity: 0.06,
+    bottom: -160,
+    left: -130,
   },
 
-  star1: {
-    top: "14%",
-    left: "18%",
-  },
-
-  star2: {
-    top: "24%",
-    right: "20%",
-    width: 2,
-    height: 2,
-  },
-
-  star3: {
-    top: "38%",
-    left: "10%",
-    width: 2,
-    height: 2,
-  },
-
-  star4: {
-    top: "55%",
-    right: "12%",
-  },
-
-  star5: {
-    top: "70%",
-    left: "20%",
-    width: 2,
-    height: 2,
-  },
-
-  star6: {
-    top: "80%",
-    right: "25%",
-    width: 2,
-    height: 2,
-  },
-
-  // ==========================================
-  // TEXTO SUPERIOR
-  // ==========================================
-
-  topLabel: {
+  lightBeam: {
     position: "absolute",
-    top: 70,
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 3,
-    color: "#6FCBEA",
-  },
-
-  // ==========================================
-  // ROTA
-  // ==========================================
-
-  routeContainer: {
-    position: "absolute",
-    top: "25%",
-    width: 300,
-    height: 80,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  startPoint: {
-    position: "absolute",
-    left: 20,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 90,
+    height: "150%",
     backgroundColor: "#FFFFFF",
+    opacity: 0.025,
   },
 
-  destinationPoint: {
+  topContent: {
     position: "absolute",
-    right: 20,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    borderWidth: 2,
-    borderColor: "#28D7FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  destinationInner: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#28D7FF",
-  },
-
-  routeTrack: {
-    width: 240,
-    height: 2,
-    overflow: "hidden",
-    borderStyle: "dashed",
-    borderWidth: 1,
-    borderColor: "#24516A",
-  },
-
-  routeLine: {
-    height: 2,
-    backgroundColor: "#28D7FF",
-  },
-
-  // ==========================================
-  // AVIÃO
-  // ==========================================
-
-  airplane: {
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  airplaneIcon: {
-    fontSize: 28,
-    color: "#FFFFFF",
-  },
-
-  // ==========================================
-  // BRILHO
-  // ==========================================
-
-  glow: {
-    position: "absolute",
-    width: 260,
-    height: 260,
-    borderRadius: 130,
-    backgroundColor: "#00CFFF",
-    opacity: 0.08,
-  },
-
-  // ==========================================
-  // LOGO
-  // ==========================================
-
-  logoContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  logo: {
-    width: 260,
-    height: 260,
-    resizeMode: "contain",
-  },
-
-  // ==========================================
-  // TEXTOS
-  // ==========================================
-
-  textContainer: {
-    alignItems: "center",
-    marginTop: -10,
-  },
-
-  title: {
-    fontSize: 38,
-    fontWeight: "900",
-    letterSpacing: 1,
-    color: "#FFFFFF",
-  },
-
-  subtitle: {
-    marginTop: 6,
-    fontSize: 15,
-    fontWeight: "500",
-    letterSpacing: 1,
-    color: "#8DA7BA",
-  },
-
-  // ==========================================
-  // DESTINO
-  // ==========================================
-
-  locationContainer: {
-    position: "absolute",
-    bottom: 105,
+    top: 65,
     flexDirection: "row",
     alignItems: "center",
   },
 
-  locationDot: {
-    width: 6,
-    height: 6,
+  statusDot: {
+    width: 5,
+    height: 5,
     borderRadius: 3,
-    backgroundColor: "#28D7FF",
-    marginRight: 8,
+    backgroundColor: "#22D3EE",
+    marginRight: 9,
   },
 
-  locationText: {
-    fontSize: 10,
+  topText: {
+    fontSize: 9,
     fontWeight: "700",
-    letterSpacing: 2,
-    color: "#6F8798",
+    letterSpacing: 2.5,
+    color: "#71879A",
   },
 
-  // ==========================================
-  // RODAPÉ
-  // ==========================================
+  logoArea: {
+    width: 280,
+    height: 280,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  logoGlow: {
+    position: "absolute",
+    width: 190,
+    height: 190,
+    borderRadius: 95,
+    backgroundColor: "#00CFFF",
+    opacity: 0.07,
+  },
+
+  logo: {
+    width: 250,
+    height: 250,
+    resizeMode: "contain",
+  },
+
+  brandArea: {
+    alignItems: "center",
+    marginTop: -15,
+  },
+
+  brand: {
+    fontSize: 36,
+    fontWeight: "800",
+    letterSpacing: -1,
+    color: "#FFFFFF",
+  },
+
+  description: {
+    marginTop: 8,
+    fontSize: 9,
+    fontWeight: "700",
+    letterSpacing: 4,
+    color: "#6E8A9E",
+  },
+
+  lineContainer: {
+    position: "absolute",
+    bottom: 90,
+    width: 100,
+    height: 1,
+    backgroundColor: "#182C3B",
+    overflow: "hidden",
+  },
+
+  line: {
+    height: 1,
+    backgroundColor: "#22D3EE",
+  },
 
   footer: {
     position: "absolute",
     bottom: 35,
-    fontSize: 9,
-    fontWeight: "600",
+    width: "82%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  footerText: {
+    fontSize: 8,
+    fontWeight: "700",
     letterSpacing: 2,
-    color: "#435665",
+    color: "#3D5566",
+  },
+
+  version: {
+    fontSize: 8,
+    fontWeight: "600",
+    color: "#3D5566",
   },
 
 });
