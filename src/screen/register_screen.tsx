@@ -11,10 +11,14 @@ import {
   View,
 } from "react-native";
 
-export default function LoginScreen({ navigation }: any) {
+export default function RegisterScreen({ navigation }: any) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [nameError, setNameError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
@@ -28,6 +32,46 @@ export default function LoginScreen({ navigation }: any) {
   const hasUppercase = /[A-Z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
   const hasSymbol = /[^A-Za-z0-9]/.test(password);
+
+  // ==========================================
+  // NOME
+  // ==========================================
+
+  const handleNameChange = (text: string) => {
+    setName(text);
+
+    if (nameError) {
+      setNameError("");
+    }
+  };
+
+  // ==========================================
+  // CELULAR
+  // Formato: (11) 99999-9999
+  // ==========================================
+
+  const handlePhoneChange = (text: string) => {
+    const numbers = text.replace(/\D/g, "");
+
+    let formatted = numbers;
+
+    if (numbers.length <= 2) {
+      formatted = numbers;
+    } else if (numbers.length <= 7) {
+      formatted = `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    } else {
+      formatted = `(${numbers.slice(0, 2)}) ${numbers.slice(
+        2,
+        7
+      )}-${numbers.slice(7, 11)}`;
+    }
+
+    setPhone(formatted);
+
+    if (phoneError) {
+      setPhoneError("");
+    }
+  };
 
   // ==========================================
   // E-MAIL
@@ -55,6 +99,46 @@ export default function LoginScreen({ navigation }: any) {
     if (passwordError) {
       setPasswordError("");
     }
+  };
+
+  // ==========================================
+  // VALIDAR NOME
+  // ==========================================
+
+  const validateName = () => {
+    if (!name.trim()) {
+      setNameError("Digite seu nome.");
+      return false;
+    }
+
+    if (name.trim().length < 3) {
+      setNameError("Digite seu nome completo.");
+      return false;
+    }
+
+    setNameError("");
+    return true;
+  };
+
+  // ==========================================
+  // VALIDAR CELULAR
+  // ==========================================
+
+  const validatePhone = () => {
+    const numbers = phone.replace(/\D/g, "");
+
+    if (!numbers) {
+      setPhoneError("Digite seu celular.");
+      return false;
+    }
+
+    if (numbers.length !== 11) {
+      setPhoneError("Digite um celular válido.");
+      return false;
+    }
+
+    setPhoneError("");
+    return true;
   };
 
   // ==========================================
@@ -122,21 +206,29 @@ export default function LoginScreen({ navigation }: any) {
   };
 
   // ==========================================
-  // LOGIN
+  // CADASTRAR
   // ==========================================
 
-  const handleLogin = () => {
+  const handleRegister = () => {
+    const validName = validateName();
+    const validPhone = validatePhone();
     const validEmail = validateEmail();
     const validPassword = validatePassword();
 
-    if (!validEmail || !validPassword) {
+    if (
+      !validName ||
+      !validPhone ||
+      !validEmail ||
+      !validPassword
+    ) {
       return;
     }
 
-    // Futuramente:
-    // API / Firebase / banco de dados
+    // Aqui futuramente entra sua API/Firebase.
 
-    console.log("Login realizado:", {
+    console.log("Cadastro:", {
+      name,
+      phone,
       email,
       password,
     });
@@ -161,7 +253,7 @@ export default function LoginScreen({ navigation }: any) {
         >
 
           {/* ==================================
-              LOGO
+              HEADER
           ================================== */}
 
           <View style={styles.header}>
@@ -183,22 +275,99 @@ export default function LoginScreen({ navigation }: any) {
           </View>
 
           {/* ==================================
-              LOGIN
+              TÍTULO
+          ================================== */}
+
+          <View style={styles.intro}>
+
+            <Text style={styles.title}>
+              Criar conta
+            </Text>
+
+            <Text style={styles.description}>
+              Preencha seus dados para começar.
+            </Text>
+
+          </View>
+
+          {/* ==================================
+              FORMULÁRIO
           ================================== */}
 
           <View style={styles.form}>
 
-            <Text style={styles.title}>
-              Entrar
-            </Text>
+            {/* NOME */}
 
-            <Text style={styles.description}>
-              Acesse sua conta para continuar.
-            </Text>
+            <View style={styles.field}>
 
-            {/* =================================
-                E-MAIL
-            ================================= */}
+              <Text style={styles.label}>
+                NOME
+              </Text>
+
+              <TextInput
+                style={[
+                  styles.input,
+                  nameError
+                    ? styles.inputError
+                    : null,
+                ]}
+                value={name}
+                onChangeText={handleNameChange}
+                onBlur={validateName}
+                placeholder="Seu nome completo"
+                placeholderTextColor="#687A88"
+                autoCapitalize="words"
+                autoCorrect={false}
+                autoComplete="name"
+                textContentType="name"
+                maxLength={100}
+                returnKeyType="next"
+              />
+
+              {nameError ? (
+                <Text style={styles.error}>
+                  {nameError}
+                </Text>
+              ) : null}
+
+            </View>
+
+            {/* CELULAR */}
+
+            <View style={styles.field}>
+
+              <Text style={styles.label}>
+                CELULAR
+              </Text>
+
+              <TextInput
+                style={[
+                  styles.input,
+                  phoneError
+                    ? styles.inputError
+                    : null,
+                ]}
+                value={phone}
+                onChangeText={handlePhoneChange}
+                onBlur={validatePhone}
+                placeholder="(11) 99999-9999"
+                placeholderTextColor="#687A88"
+                keyboardType="phone-pad"
+                autoComplete="tel"
+                textContentType="telephoneNumber"
+                maxLength={15}
+                returnKeyType="next"
+              />
+
+              {phoneError ? (
+                <Text style={styles.error}>
+                  {phoneError}
+                </Text>
+              ) : null}
+
+            </View>
+
+            {/* E-MAIL */}
 
             <View style={styles.field}>
 
@@ -235,29 +404,13 @@ export default function LoginScreen({ navigation }: any) {
 
             </View>
 
-            {/* =================================
-                SENHA
-            ================================= */}
+            {/* SENHA */}
 
             <View style={styles.field}>
 
-              <View style={styles.labelRow}>
-
-                <Text style={styles.label}>
-                  SENHA
-                </Text>
-
-                <Pressable
-                  onPress={() =>
-                    console.log("Recuperar senha")
-                  }
-                >
-                  <Text style={styles.forgot}>
-                    Esqueci a senha
-                  </Text>
-                </Pressable>
-
-              </View>
+              <Text style={styles.label}>
+                SENHA
+              </Text>
 
               <View>
 
@@ -272,16 +425,16 @@ export default function LoginScreen({ navigation }: any) {
                   value={password}
                   onChangeText={handlePasswordChange}
                   onBlur={validatePassword}
-                  placeholder="Digite sua senha"
+                  placeholder="Crie uma senha"
                   placeholderTextColor="#687A88"
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
-                  autoComplete="password"
-                  textContentType="password"
+                  autoComplete="new-password"
+                  textContentType="newPassword"
                   maxLength={64}
                   returnKeyType="done"
-                  onSubmitEditing={handleLogin}
+                  onSubmitEditing={handleRegister}
                 />
 
                 <Pressable
@@ -290,16 +443,18 @@ export default function LoginScreen({ navigation }: any) {
                     setShowPassword(!showPassword)
                   }
                 >
+
                   <Text style={styles.showPasswordText}>
                     {showPassword
                       ? "Ocultar"
                       : "Mostrar"}
                   </Text>
+
                 </Pressable>
 
               </View>
 
-              {/* REQUISITOS DA SENHA */}
+              {/* REQUISITOS */}
 
               <View style={styles.requirements}>
 
@@ -334,19 +489,21 @@ export default function LoginScreen({ navigation }: any) {
             </View>
 
             {/* ==================================
-                BOTÃO ENTRAR
+                BOTÃO
             ================================== */}
 
             <Pressable
               style={({ pressed }) => [
                 styles.button,
-                pressed && styles.buttonPressed,
+                pressed
+                  ? styles.buttonPressed
+                  : null,
               ]}
-              onPress={handleLogin}
+              onPress={handleRegister}
             >
 
               <Text style={styles.buttonText}>
-                ENTRAR
+                CRIAR CONTA
               </Text>
 
               <Text style={styles.arrow}>
@@ -356,23 +513,25 @@ export default function LoginScreen({ navigation }: any) {
             </Pressable>
 
             {/* ==================================
-                CRIAR CONTA
+                VOLTAR PARA LOGIN
             ================================== */}
 
-            <View style={styles.register}>
+            <View style={styles.loginArea}>
 
-              <Text style={styles.registerText}>
-                Ainda não tem uma conta?
+              <Text style={styles.loginText}>
+                Já possui uma conta?
               </Text>
 
               <Pressable
                 onPress={() =>
-                  navigation.navigate("Register")
+                  navigation.navigate("Login")
                 }
               >
-                <Text style={styles.registerLink}>
-                  Criar conta
+
+                <Text style={styles.loginLink}>
+                  Entrar
                 </Text>
+
               </Pressable>
 
             </View>
@@ -396,7 +555,7 @@ export default function LoginScreen({ navigation }: any) {
 }
 
 // ==========================================
-// COMPONENTE DOS REQUISITOS
+// REQUISITO DA SENHA
 // ==========================================
 
 function PasswordRequirement({
@@ -451,7 +610,7 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     paddingHorizontal: 27,
-    paddingTop: 45,
+    paddingTop: 32,
     paddingBottom: 30,
   },
 
@@ -461,38 +620,59 @@ const styles = StyleSheet.create({
 
   header: {
     alignItems: "center",
-    marginBottom: 48,
+    marginBottom: 35,
   },
 
   logo: {
-    width: 56,
-    height: 56,
-    borderRadius: 17,
+    width: 52,
+    height: 52,
+    borderRadius: 16,
     backgroundColor: "#0A1C28",
     borderWidth: 1,
     borderColor: "#1B5065",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 13,
+    marginBottom: 12,
   },
 
   logoText: {
-    fontSize: 26,
+    fontSize: 25,
     fontWeight: "900",
     color: "#25D5F5",
   },
 
   brand: {
-    fontSize: 27,
+    fontSize: 25,
     fontWeight: "800",
     color: "#FFFFFF",
-    letterSpacing: -0.7,
+    letterSpacing: -0.6,
   },
 
   subtitle: {
     marginTop: 6,
     fontSize: 10,
     color: "#667D8C",
+  },
+
+  // ========================================
+  // INTRO
+  // ========================================
+
+  intro: {
+    marginBottom: 25,
+  },
+
+  title: {
+    fontSize: 29,
+    fontWeight: "800",
+    color: "#FFFFFF",
+    letterSpacing: -0.7,
+  },
+
+  description: {
+    marginTop: 6,
+    fontSize: 13,
+    color: "#687F8E",
   },
 
   // ========================================
@@ -503,37 +683,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 
-  title: {
-    fontSize: 30,
-    fontWeight: "800",
-    color: "#FFFFFF",
-    letterSpacing: -0.7,
-  },
-
-  description: {
-    marginTop: 7,
-    marginBottom: 30,
-    fontSize: 13,
-    color: "#687F8E",
-  },
-
-  // ========================================
-  // CAMPOS
-  // ========================================
-
   field: {
-    marginBottom: 22,
-  },
-
-  labelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 9,
+    marginBottom: 17,
   },
 
   label: {
-    marginBottom: 9,
+    marginBottom: 8,
     fontSize: 9,
     fontWeight: "800",
     letterSpacing: 1.8,
@@ -542,18 +697,18 @@ const styles = StyleSheet.create({
 
   input: {
     width: "100%",
-    height: 56,
+    height: 53,
     borderRadius: 13,
     borderWidth: 1,
     borderColor: "#1A3442",
     backgroundColor: "#09151F",
-    paddingHorizontal: 16,
+    paddingHorizontal: 15,
     fontSize: 14,
     color: "#FFFFFF",
   },
 
   passwordInput: {
-    paddingRight: 80,
+    paddingRight: 78,
   },
 
   inputError: {
@@ -561,7 +716,7 @@ const styles = StyleSheet.create({
   },
 
   error: {
-    marginTop: 7,
+    marginTop: 6,
     marginLeft: 3,
     fontSize: 10,
     color: "#E45E6C",
@@ -573,9 +728,9 @@ const styles = StyleSheet.create({
 
   showPassword: {
     position: "absolute",
-    right: 15,
+    right: 14,
     top: 0,
-    height: 56,
+    height: 53,
     justifyContent: "center",
   },
 
@@ -585,23 +740,12 @@ const styles = StyleSheet.create({
     color: "#25D5F5",
   },
 
-  forgot: {
-    marginBottom: 9,
-    fontSize: 10,
-    fontWeight: "600",
-    color: "#25D5F5",
-  },
-
-  // ========================================
-  // REQUISITOS
-  // ========================================
-
   requirements: {
     flexDirection: "row",
     flexWrap: "wrap",
     columnGap: 14,
     rowGap: 7,
-    marginTop: 11,
+    marginTop: 10,
   },
 
   requirement: {
@@ -638,13 +782,13 @@ const styles = StyleSheet.create({
   // ========================================
 
   button: {
-    height: 56,
+    height: 55,
     borderRadius: 13,
     backgroundColor: "#25D5F5",
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    marginTop: 3,
+    marginTop: 5,
   },
 
   buttonPressed: {
@@ -652,33 +796,33 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: "900",
-    letterSpacing: 2,
+    letterSpacing: 1.8,
     color: "#041018",
   },
 
   arrow: {
-    marginLeft: 12,
+    marginLeft: 11,
     fontSize: 20,
     color: "#041018",
   },
 
   // ========================================
-  // CADASTRO
+  // LOGIN
   // ========================================
 
-  register: {
+  loginArea: {
     alignItems: "center",
-    marginTop: 26,
+    marginTop: 23,
   },
 
-  registerText: {
+  loginText: {
     fontSize: 11,
     color: "#5F7584",
   },
 
-  registerLink: {
+  loginLink: {
     marginTop: 6,
     fontSize: 12,
     fontWeight: "800",
@@ -691,7 +835,7 @@ const styles = StyleSheet.create({
 
   footer: {
     marginTop: "auto",
-    paddingTop: 45,
+    paddingTop: 35,
     textAlign: "center",
     fontSize: 8,
     fontWeight: "700",
