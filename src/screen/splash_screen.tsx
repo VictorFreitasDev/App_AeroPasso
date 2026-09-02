@@ -3,6 +3,7 @@ import {
   Animated,
   Easing,
   Image,
+  ImageBackground,
   StyleSheet,
   Text,
   View,
@@ -78,171 +79,181 @@ export default function SplashScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
 
-      <View style={styles.gradientBase} />
-
-      <View style={styles.blueGlow} />
-
-      <View style={styles.cyanGlow} />
-
-      <Animated.View
-        style={[
-          styles.lightBeam,
-          {
-            transform: [
-              {
-                translateX: lightTranslate,
-              },
-              {
-                rotate: "-25deg",
-              },
-            ],
-          },
-        ]}
-      />
-
-      <Animated.View
-        style={[
-          styles.topContent,
-          {
-            opacity,
-          },
-        ]}
-      >
-        <View style={styles.statusDot} />
-
-        <Text style={styles.topText}>
-          YOUR JOURNEY STARTS HERE
-        </Text>
-      </Animated.View>
-
-      <Animated.View
-        style={[
-          styles.logoArea,
-          {
-            opacity,
-            transform: [
-              {
-                scale,
-              },
-              {
-                translateY,
-              },
-            ],
-          },
-        ]}
+      {/* BACKGROUND DO AEROPORTO */}
+      <ImageBackground
+        source={require("../../assets/images/backsplash.png")}
+        style={styles.background}
+        resizeMode="cover"
       >
 
-        <View style={styles.logoGlow} />
+        {/* Escurecimento geral para melhorar a leitura */}
+        <View style={styles.darkOverlay} />
 
-        <Image
-          source={require("../../assets/images/aeropasso.png")}
-          style={styles.logo}
-        />
+        {/* Degradê azul inspirado na identidade do AeroPasso */}
+        <View style={styles.blueOverlay} />
 
-      </Animated.View>
+        {/* Brilho azul */}
+        <View style={styles.blueGlow} />
 
-      <Animated.View
-        style={[
-          styles.brandArea,
-          {
-            opacity,
-            transform: [
-              {
-                translateY,
-              },
-            ],
-          },
-        ]}
-      >
-
-        <Text style={styles.brand}>
-          AeroPasso
-        </Text>
-
-        <Text style={styles.description}>
-          VIAJE DO SEU JEITO
-        </Text>
-
-      </Animated.View>
-
-      <View style={styles.lineContainer}>
-
+        {/* Feixe de luz animado */}
         <Animated.View
           style={[
-            styles.line,
+            styles.lightBeam,
             {
-              width: animatedLineWidth,
+              transform: [
+                {
+                  translateX: lightTranslate,
+                },
+                {
+                  rotate: "-25deg",
+                },
+              ],
             },
           ]}
         />
 
-      </View>
+        {/* TEXTO SUPERIOR */}
+        <Animated.View
+          style={[
+            styles.topContent,
+            {
+              opacity,
+            },
+          ]}
+        >
+          <View style={styles.statusDot} />
 
-      <Animated.View
-        style={[
-          styles.footer,
-          {
-            opacity,
-          },
-        ]}
-      >
+          <Text style={styles.topText}>
+            SEU CAMINHO PELO AEROPORTO
+          </Text>
+        </Animated.View>
 
-        <Text style={styles.footerText}>
-          AEROPASSO
-        </Text>
+        {/* LOGO */}
+        <Animated.View
+          style={[
+            styles.logoArea,
+            {
+              opacity,
+              transform: [
+                {
+                  scale,
+                },
+                {
+                  translateY,
+                },
+              ],
+            },
+          ]}
+        >
+          <View style={styles.logoGlow} />
 
-        <Text style={styles.version}>
-          01
-        </Text>
+          <Image
+            source={require("../../assets/images/aeropasso.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </Animated.View>
 
-      </Animated.View>
+        {/* NOME */}
+        <Animated.View
+          style={[
+            styles.brandArea,
+            {
+              opacity,
+              transform: [
+                {
+                  translateY,
+                },
+              ],
+            },
+          ]}
+        >
+          <Text style={styles.brand}>
+            AeroPasso
+          </Text>
 
+          <Text style={styles.description}>
+            ROTAS PARA AEROPORTOS
+          </Text>
+        </Animated.View>
+
+        {/* LINHA ANIMADA */}
+        <View style={styles.lineContainer}>
+          <Animated.View
+            style={[
+              styles.line,
+              {
+                width: animatedLineWidth,
+              },
+            ]}
+          />
+        </View>
+
+        {/* RODAPÉ */}
+        <Animated.View
+          style={[
+            styles.footer,
+            {
+              opacity,
+            },
+          ]}
+        >
+          <Text style={styles.footerText}>
+            AEROPASSO
+          </Text>
+
+          <Text style={styles.version}>
+            01
+          </Text>
+        </Animated.View>
+
+      </ImageBackground>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
-    backgroundColor: "#050A12",
+    backgroundColor: "#031B5B",
+  },
+
+  background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
   },
 
-  gradientBase: {
-    position: "absolute",
-    width: "130%",
-    height: "130%",
-    backgroundColor: "#071522",
-    transform: [
-      {
-        rotate: "-8deg",
-      },
-    ],
+  /*
+   * Camada escura.
+   * Deixa a foto mais elegante e permite
+   * que a logo apareça com mais força.
+   */
+  darkOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 8, 30, 0.48)",
+  },
+
+  /*
+   * Azul da identidade visual do AeroPasso.
+   */
+  blueOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 55, 150, 0.16)",
   },
 
   blueGlow: {
     position: "absolute",
-    width: 420,
-    height: 420,
-    borderRadius: 210,
-    backgroundColor: "#075B91",
-    opacity: 0.13,
-    top: -180,
-    right: -160,
-  },
-
-  cyanGlow: {
-    position: "absolute",
-    width: 330,
-    height: 330,
-    borderRadius: 165,
-    backgroundColor: "#00D5FF",
-    opacity: 0.06,
-    bottom: -160,
-    left: -130,
+    width: 450,
+    height: 450,
+    borderRadius: 225,
+    backgroundColor: "#00BFFF",
+    opacity: 0.08,
+    top: -200,
+    right: -180,
   },
 
   lightBeam: {
@@ -253,11 +264,15 @@ const styles = StyleSheet.create({
     opacity: 0.025,
   },
 
+  /*
+   * TEXTO SUPERIOR
+   */
   topContent: {
     position: "absolute",
     top: 65,
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 20,
   },
 
   statusDot: {
@@ -271,10 +286,13 @@ const styles = StyleSheet.create({
   topText: {
     fontSize: 9,
     fontWeight: "700",
-    letterSpacing: 2.5,
-    color: "#71879A",
+    letterSpacing: 2.2,
+    color: "#D5F6FF",
   },
 
+  /*
+   * LOGO
+   */
   logoArea: {
     width: 280,
     height: 280,
@@ -284,19 +302,21 @@ const styles = StyleSheet.create({
 
   logoGlow: {
     position: "absolute",
-    width: 190,
-    height: 190,
-    borderRadius: 95,
-    backgroundColor: "#00CFFF",
-    opacity: 0.07,
+    width: 210,
+    height: 210,
+    borderRadius: 105,
+    backgroundColor: "#00D5FF",
+    opacity: 0.13,
   },
 
   logo: {
     width: 250,
     height: 250,
-    resizeMode: "contain",
   },
 
+  /*
+   * MARCA
+   */
   brandArea: {
     alignItems: "center",
     marginTop: -15,
@@ -307,22 +327,40 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: -1,
     color: "#FFFFFF",
+
+    // Pequena sombra para separar da fotografia
+    textShadowColor: "rgba(0, 0, 0, 0.55)",
+    textShadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    textShadowRadius: 8,
   },
 
   description: {
     marginTop: 8,
     fontSize: 9,
     fontWeight: "700",
-    letterSpacing: 4,
-    color: "#6E8A9E",
+    letterSpacing: 3.2,
+    color: "#B9EEFF",
+
+    textShadowColor: "rgba(0, 0, 0, 0.5)",
+    textShadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    textShadowRadius: 5,
   },
 
+  /*
+   * LINHA
+   */
   lineContainer: {
     position: "absolute",
     bottom: 90,
     width: 100,
     height: 1,
-    backgroundColor: "#182C3B",
+    backgroundColor: "rgba(255,255,255,0.25)",
     overflow: "hidden",
   },
 
@@ -331,6 +369,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#22D3EE",
   },
 
+  /*
+   * RODAPÉ
+   */
   footer: {
     position: "absolute",
     bottom: 35,
@@ -343,13 +384,12 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: "700",
     letterSpacing: 2,
-    color: "#3D5566",
+    color: "rgba(255,255,255,0.65)",
   },
 
   version: {
     fontSize: 8,
     fontWeight: "600",
-    color: "#3D5566",
+    color: "rgba(255,255,255,0.65)",
   },
-
 });
