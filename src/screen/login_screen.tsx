@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
   View,
+  Image,
 } from "react-native";
 
 export default function LoginScreen({ navigation }: any) {
@@ -34,9 +35,7 @@ export default function LoginScreen({ navigation }: any) {
   // ==========================================
 
   const handleEmailChange = (text: string) => {
-    const value = text
-      .replace(/\s/g, "")
-      .toLowerCase();
+    const value = text.replace(/\s/g, "").toLowerCase();
 
     setEmail(value);
 
@@ -133,9 +132,6 @@ export default function LoginScreen({ navigation }: any) {
       return;
     }
 
-    // Futuramente:
-    // API / Firebase / banco de dados
-
     console.log("Login realizado:", {
       email,
       password,
@@ -144,7 +140,6 @@ export default function LoginScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container}>
-
       <KeyboardAvoidingView
         style={styles.keyboard}
         behavior={
@@ -153,96 +148,125 @@ export default function LoginScreen({ navigation }: any) {
             : undefined
         }
       >
-
         <ScrollView
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          {/* ==================================
+              TOPO
+          ================================== */}
+
+          <View style={styles.topBar}>
+            <View>
+              <Text style={styles.kicker}>
+                AEROPASSO
+              </Text>
+
+              <View style={styles.routeIndicator}>
+                <View style={styles.routeDot} />
+                <View style={styles.routeLine} />
+                <View style={styles.routeDotSmall} />
+              </View>
+            </View>
+
+            <Text style={styles.topNumber}>
+              01
+            </Text>
+          </View>
 
           {/* ==================================
               LOGO
           ================================== */}
 
-          <View style={styles.header}>
+          <View style={styles.brandBlock}>
+            <Image
+              source={require("../../assets/images/aeropasso.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
 
-            <View style={styles.logo}>
-              <Text style={styles.logoText}>
-                A
-              </Text>
-            </View>
-
-            <Text style={styles.brand}>
-              AeroPasso
+            <Text style={styles.welcome}>
+              Bem-vindo
             </Text>
 
-            <Text style={styles.subtitle}>
-              Sua jornada começa aqui
+            <Text style={styles.brandTitle}>
+              Seu próximo destino
             </Text>
-
           </View>
 
           {/* ==================================
-              LOGIN
+              FORMULÁRIO
           ================================== */}
 
-          <View style={styles.form}>
+          <View style={styles.formCard}>
+            <View style={styles.cardHeader}>
+              <View>
+                <Text style={styles.cardEyebrow}>
+                  ACESSO
+                </Text>
 
-            <Text style={styles.title}>
-              Entrar
-            </Text>
+                <Text style={styles.title}>
+                  Entrar na conta
+                </Text>
+              </View>
+
+              <View style={styles.statusCircle}>
+                <View style={styles.statusDot} />
+              </View>
+            </View>
 
             <Text style={styles.description}>
-              Acesse sua conta para continuar.
+              Continue sua jornada pelo AeroPasso.
             </Text>
 
-            {/* =================================
-                E-MAIL
-            ================================= */}
+            {/* E-MAIL */}
 
             <View style={styles.field}>
-
               <Text style={styles.label}>
                 E-MAIL
               </Text>
 
-              <TextInput
+              <View
                 style={[
-                  styles.input,
+                  styles.inputContainer,
                   emailError
-                    ? styles.inputError
+                    ? styles.inputContainerError
                     : null,
                 ]}
-                value={email}
-                onChangeText={handleEmailChange}
-                onBlur={validateEmail}
-                placeholder="seu@email.com"
-                placeholderTextColor="#687A88"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                autoComplete="email"
-                textContentType="emailAddress"
-                maxLength={120}
-                returnKeyType="next"
-              />
+              >
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  onChangeText={handleEmailChange}
+                  onBlur={validateEmail}
+                  placeholder="seu@email.com"
+                  placeholderTextColor="#536A79"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="email"
+                  textContentType="emailAddress"
+                  maxLength={120}
+                  returnKeyType="next"
+                />
+
+                <Text style={styles.inputMark}>
+                  @
+                </Text>
+              </View>
 
               {emailError ? (
                 <Text style={styles.error}>
                   {emailError}
                 </Text>
               ) : null}
-
             </View>
 
-            {/* =================================
-                SENHA
-            ================================= */}
+            {/* SENHA */}
 
             <View style={styles.field}>
-
               <View style={styles.labelRow}>
-
                 <Text style={styles.label}>
                   SENHA
                 </Text>
@@ -253,27 +277,26 @@ export default function LoginScreen({ navigation }: any) {
                   }
                 >
                   <Text style={styles.forgot}>
-                    Esqueci a senha
+                    Esqueci
                   </Text>
                 </Pressable>
-
               </View>
 
-              <View>
-
+              <View
+                style={[
+                  styles.inputContainer,
+                  passwordError
+                    ? styles.inputContainerError
+                    : null,
+                ]}
+              >
                 <TextInput
-                  style={[
-                    styles.input,
-                    styles.passwordInput,
-                    passwordError
-                      ? styles.inputError
-                      : null,
-                  ]}
+                  style={styles.input}
                   value={password}
                   onChangeText={handlePasswordChange}
                   onBlur={validatePassword}
                   placeholder="Digite sua senha"
-                  placeholderTextColor="#687A88"
+                  placeholderTextColor="#536A79"
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -285,24 +308,18 @@ export default function LoginScreen({ navigation }: any) {
                 />
 
                 <Pressable
-                  style={styles.showPassword}
+                  style={styles.inputAction}
                   onPress={() =>
                     setShowPassword(!showPassword)
                   }
                 >
-                  <Text style={styles.showPasswordText}>
-                    {showPassword
-                      ? "Ocultar"
-                      : "Mostrar"}
+                  <Text style={styles.inputActionText}>
+                    {showPassword ? "OCULTAR" : "VER"}
                   </Text>
                 </Pressable>
-
               </View>
 
-              {/* REQUISITOS DA SENHA */}
-
               <View style={styles.requirements}>
-
                 <PasswordRequirement
                   valid={hasSixCharacters}
                   text="6 caracteres"
@@ -310,19 +327,18 @@ export default function LoginScreen({ navigation }: any) {
 
                 <PasswordRequirement
                   valid={hasUppercase}
-                  text="1 maiúscula"
+                  text="Maiúscula"
                 />
 
                 <PasswordRequirement
                   valid={hasNumber}
-                  text="1 número"
+                  text="Número"
                 />
 
                 <PasswordRequirement
                   valid={hasSymbol}
-                  text="1 símbolo"
+                  text="Símbolo"
                 />
-
               </View>
 
               {passwordError ? (
@@ -330,12 +346,9 @@ export default function LoginScreen({ navigation }: any) {
                   {passwordError}
                 </Text>
               ) : null}
-
             </View>
 
-            {/* ==================================
-                BOTÃO ENTRAR
-            ================================== */}
+            {/* BOTÃO */}
 
             <Pressable
               style={({ pressed }) => [
@@ -344,25 +357,26 @@ export default function LoginScreen({ navigation }: any) {
               ]}
               onPress={handleLogin}
             >
+              <View style={styles.buttonLeft}>
+                <Text style={styles.buttonIndex}>
+                  01
+                </Text>
 
-              <Text style={styles.buttonText}>
-                ENTRAR
-              </Text>
+                <Text style={styles.buttonText}>
+                  ENTRAR
+                </Text>
+              </View>
 
               <Text style={styles.arrow}>
-                →
+                ↗
               </Text>
-
             </Pressable>
 
-            {/* ==================================
-                CRIAR CONTA
-            ================================== */}
+            {/* CADASTRO */}
 
-            <View style={styles.register}>
-
+            <View style={styles.registerBlock}>
               <Text style={styles.registerText}>
-                Ainda não tem uma conta?
+                Ainda não faz parte da jornada?
               </Text>
 
               <Pressable
@@ -371,32 +385,31 @@ export default function LoginScreen({ navigation }: any) {
                 }
               >
                 <Text style={styles.registerLink}>
-                  Criar conta
+                  Criar uma conta →
                 </Text>
               </Pressable>
-
             </View>
-
           </View>
 
           {/* ==================================
-              FOOTER
+              RODAPÉ
           ================================== */}
 
-          <Text style={styles.footer}>
-            AEROPASSO
-          </Text>
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              ROTAS PARA AEROPORTOS
+            </Text>
 
+            <View style={styles.footerLine} />
+          </View>
         </ScrollView>
-
       </KeyboardAvoidingView>
-
     </SafeAreaView>
   );
 }
 
 // ==========================================
-// COMPONENTE DOS REQUISITOS
+// REQUISITO DA SENHA
 // ==========================================
 
 function PasswordRequirement({
@@ -408,13 +421,12 @@ function PasswordRequirement({
 }) {
   return (
     <View style={styles.requirement}>
-
       <View
         style={[
-          styles.dot,
+          styles.requirementDot,
           valid
-            ? styles.dotValid
-            : styles.dotInvalid,
+            ? styles.requirementDotValid
+            : styles.requirementDotInvalid,
         ]}
       />
 
@@ -422,13 +434,12 @@ function PasswordRequirement({
         style={[
           styles.requirementText,
           valid
-            ? styles.requirementValid
+            ? styles.requirementTextValid
             : null,
         ]}
       >
         {text}
       </Text>
-
     </View>
   );
 }
@@ -438,7 +449,6 @@ function PasswordRequirement({
 // ==========================================
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: "#050A12",
@@ -450,71 +460,154 @@ const styles = StyleSheet.create({
 
   content: {
     flexGrow: 1,
-    paddingHorizontal: 27,
-    paddingTop: 45,
-    paddingBottom: 30,
+    paddingHorizontal: 24,
+    paddingTop: 26,
+    paddingBottom: 24,
   },
 
   // ========================================
-  // HEADER
+  // TOPO
   // ========================================
 
-  header: {
+  topBar: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    marginBottom: 28,
+  },
+
+  kicker: {
+    fontSize: 9,
+    fontWeight: "900",
+    letterSpacing: 2.8,
+    color: "#6E8A9E",
+  },
+
+  routeIndicator: {
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 48,
+    marginTop: 10,
+  },
+
+  routeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#22D3EE",
+  },
+
+  routeLine: {
+    width: 42,
+    height: 1,
+    marginHorizontal: 5,
+    backgroundColor: "#1B5065",
+  },
+
+  routeDotSmall: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "#536A79",
+  },
+
+  topNumber: {
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 2,
+    color: "#3D5566",
+  },
+
+  // ========================================
+  // MARCA
+  // ========================================
+
+  brandBlock: {
+    alignItems: "center",
+    marginBottom: 34,
   },
 
   logo: {
-    width: 56,
-    height: 56,
-    borderRadius: 17,
-    backgroundColor: "#0A1C28",
+    width: 106,
+    height: 106,
+    marginBottom: 4,
+  },
+
+  welcome: {
+    marginTop: 6,
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 2,
+    color: "#22D3EE",
+    textTransform: "uppercase",
+  },
+
+  brandTitle: {
+    marginTop: 7,
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    letterSpacing: -0.3,
+  },
+
+  // ========================================
+  // CARD
+  // ========================================
+
+  formCard: {
+    width: "100%",
+    borderRadius: 22,
+    backgroundColor: "#071522",
+    borderWidth: 1,
+    borderColor: "#122A3A",
+    paddingHorizontal: 20,
+    paddingTop: 21,
+    paddingBottom: 22,
+  },
+
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  cardEyebrow: {
+    fontSize: 8,
+    fontWeight: "900",
+    letterSpacing: 2.4,
+    color: "#22D3EE",
+    marginBottom: 5,
+  },
+
+  title: {
+    fontSize: 25,
+    fontWeight: "800",
+    color: "#FFFFFF",
+    letterSpacing: -0.7,
+  },
+
+  statusCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     borderWidth: 1,
     borderColor: "#1B5065",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 13,
   },
 
-  logoText: {
-    fontSize: 26,
-    fontWeight: "900",
-    color: "#25D5F5",
-  },
-
-  brand: {
-    fontSize: 27,
-    fontWeight: "800",
-    color: "#FFFFFF",
-    letterSpacing: -0.7,
-  },
-
-  subtitle: {
-    marginTop: 6,
-    fontSize: 10,
-    color: "#667D8C",
-  },
-
-  // ========================================
-  // FORM
-  // ========================================
-
-  form: {
-    width: "100%",
-  },
-
-  title: {
-    fontSize: 30,
-    fontWeight: "800",
-    color: "#FFFFFF",
-    letterSpacing: -0.7,
+  statusDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: "#22D3EE",
   },
 
   description: {
     marginTop: 7,
-    marginBottom: 30,
-    fontSize: 13,
-    color: "#687F8E",
+    marginBottom: 25,
+    fontSize: 12,
+    lineHeight: 18,
+    color: "#6E8A9E",
   },
 
   // ========================================
@@ -522,74 +615,79 @@ const styles = StyleSheet.create({
   // ========================================
 
   field: {
-    marginBottom: 22,
+    marginBottom: 19,
   },
 
   labelRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 9,
+    marginBottom: 8,
   },
 
   label: {
-    marginBottom: 9,
-    fontSize: 9,
-    fontWeight: "800",
-    letterSpacing: 1.8,
-    color: "#708594",
+    marginBottom: 8,
+    fontSize: 8,
+    fontWeight: "900",
+    letterSpacing: 2,
+    color: "#6E8A9E",
+  },
+
+  inputContainer: {
+    height: 52,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#182C3B",
+    backgroundColor: "#050A12",
+    paddingLeft: 14,
+    paddingRight: 13,
+  },
+
+  inputContainerError: {
+    borderColor: "#E45E6C",
   },
 
   input: {
-    width: "100%",
-    height: 56,
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: "#1A3442",
-    backgroundColor: "#09151F",
-    paddingHorizontal: 16,
+    flex: 1,
+    height: "100%",
     fontSize: 14,
     color: "#FFFFFF",
   },
 
-  passwordInput: {
-    paddingRight: 80,
+  inputMark: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#3D5566",
   },
 
-  inputError: {
-    borderColor: "#E45E6C",
-  },
-
-  error: {
-    marginTop: 7,
-    marginLeft: 3,
-    fontSize: 10,
-    color: "#E45E6C",
-  },
-
-  // ========================================
-  // SENHA
-  // ========================================
-
-  showPassword: {
-    position: "absolute",
-    right: 15,
-    top: 0,
-    height: 56,
+  inputAction: {
+    paddingLeft: 12,
+    height: "100%",
+    alignItems: "center",
     justifyContent: "center",
   },
 
-  showPasswordText: {
-    fontSize: 10,
-    fontWeight: "700",
-    color: "#25D5F5",
+  inputActionText: {
+    fontSize: 8,
+    fontWeight: "900",
+    letterSpacing: 1,
+    color: "#22D3EE",
   },
 
   forgot: {
-    marginBottom: 9,
+    marginBottom: 8,
+    fontSize: 9,
+    fontWeight: "800",
+    color: "#22D3EE",
+  },
+
+  error: {
+    marginTop: 6,
+    marginLeft: 2,
     fontSize: 10,
-    fontWeight: "600",
-    color: "#25D5F5",
+    color: "#E45E6C",
   },
 
   // ========================================
@@ -601,7 +699,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     columnGap: 14,
     rowGap: 7,
-    marginTop: 11,
+    marginTop: 9,
   },
 
   requirement: {
@@ -609,28 +707,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  dot: {
-    width: 6,
-    height: 6,
+  requirementDot: {
+    width: 5,
+    height: 5,
     borderRadius: 3,
     marginRight: 5,
   },
 
-  dotInvalid: {
-    backgroundColor: "#425462",
+  requirementDotInvalid: {
+    backgroundColor: "#3D5566",
   },
 
-  dotValid: {
-    backgroundColor: "#25D5F5",
+  requirementDotValid: {
+    backgroundColor: "#22D3EE",
   },
 
   requirementText: {
-    fontSize: 9,
-    color: "#536A79",
+    fontSize: 8,
+    color: "#3D5566",
   },
 
-  requirementValid: {
-    color: "#8CA5B3",
+  requirementTextValid: {
+    color: "#6E8A9E",
   },
 
   // ========================================
@@ -638,51 +736,69 @@ const styles = StyleSheet.create({
   // ========================================
 
   button: {
-    height: 56,
+    height: 57,
     borderRadius: 13,
-    backgroundColor: "#25D5F5",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#22D3EE",
+    paddingHorizontal: 15,
     flexDirection: "row",
-    marginTop: 3,
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 2,
   },
 
   buttonPressed: {
-    opacity: 0.75,
+    opacity: 0.78,
+  },
+
+  buttonLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  buttonIndex: {
+    fontSize: 8,
+    fontWeight: "900",
+    letterSpacing: 1,
+    color: "#0A1821",
+    marginRight: 12,
+    opacity: 0.55,
   },
 
   buttonText: {
     fontSize: 11,
     fontWeight: "900",
     letterSpacing: 2,
-    color: "#041018",
+    color: "#050A12",
   },
 
   arrow: {
-    marginLeft: 12,
-    fontSize: 20,
-    color: "#041018",
+    fontSize: 24,
+    fontWeight: "400",
+    color: "#050A12",
   },
 
   // ========================================
   // CADASTRO
   // ========================================
 
-  register: {
+  registerBlock: {
+    marginTop: 21,
+    paddingTop: 17,
+    borderTopWidth: 1,
+    borderTopColor: "#122A3A",
     alignItems: "center",
-    marginTop: 26,
   },
 
   registerText: {
-    fontSize: 11,
-    color: "#5F7584",
+    fontSize: 10,
+    color: "#536A79",
   },
 
   registerLink: {
     marginTop: 6,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "800",
-    color: "#25D5F5",
+    color: "#22D3EE",
   },
 
   // ========================================
@@ -690,13 +806,22 @@ const styles = StyleSheet.create({
   // ========================================
 
   footer: {
-    marginTop: "auto",
-    paddingTop: 45,
-    textAlign: "center",
-    fontSize: 8,
-    fontWeight: "700",
-    letterSpacing: 2,
-    color: "#304653",
+    alignItems: "center",
+    marginTop: 27,
   },
 
+  footerText: {
+    fontSize: 7,
+    fontWeight: "800",
+    letterSpacing: 2.3,
+    color: "#3D5566",
+  },
+
+  footerLine: {
+    width: 45,
+    height: 1,
+    backgroundColor: "#22D3EE",
+    marginTop: 8,
+    opacity: 0.6,
+  },
 });
