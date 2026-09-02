@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
+  Animated,
+  Easing,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -21,18 +23,23 @@ export default function LoginScreen({ navigation }: any) {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  // ==========================================
-  // REQUISITOS DA SENHA
-  // ==========================================
+  const buttonScale = useRef(
+    new Animated.Value(1)
+  ).current;
 
   const hasSixCharacters = password.length >= 6;
   const hasUppercase = /[A-Z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
   const hasSymbol = /[^A-Za-z0-9]/.test(password);
 
-  // ==========================================
-  // E-MAIL
-  // ==========================================
+  const hour = new Date().getHours();
+
+  const greeting =
+    hour < 12
+      ? "Bom dia"
+      : hour < 18
+      ? "Boa tarde"
+      : "Boa noite";
 
   const handleEmailChange = (text: string) => {
     const value = text.replace(/\s/g, "").toLowerCase();
@@ -44,10 +51,6 @@ export default function LoginScreen({ navigation }: any) {
     }
   };
 
-  // ==========================================
-  // SENHA
-  // ==========================================
-
   const handlePasswordChange = (text: string) => {
     setPassword(text);
 
@@ -55,10 +58,6 @@ export default function LoginScreen({ navigation }: any) {
       setPasswordError("");
     }
   };
-
-  // ==========================================
-  // VALIDAR E-MAIL
-  // ==========================================
 
   const validateEmail = () => {
     if (!email.trim()) {
@@ -77,10 +76,6 @@ export default function LoginScreen({ navigation }: any) {
     setEmailError("");
     return true;
   };
-
-  // ==========================================
-  // VALIDAR SENHA
-  // ==========================================
 
   const validatePassword = () => {
     if (!password) {
@@ -120,10 +115,6 @@ export default function LoginScreen({ navigation }: any) {
     return true;
   };
 
-  // ==========================================
-  // LOGIN
-  // ==========================================
-
   const handleLogin = () => {
     const validEmail = validateEmail();
     const validPassword = validatePassword();
@@ -136,6 +127,25 @@ export default function LoginScreen({ navigation }: any) {
       email,
       password,
     });
+  };
+
+  const pressLogin = () => {
+    Animated.sequence([
+      Animated.timing(buttonScale, {
+        toValue: 0.97,
+        duration: 90,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }),
+      Animated.spring(buttonScale, {
+        toValue: 1,
+        friction: 6,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    handleLogin();
   };
 
   return (
@@ -153,45 +163,50 @@ export default function LoginScreen({ navigation }: any) {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          {/* Luzes discretas */}
+
+          <View style={styles.lightBlue} />
+          <View style={styles.lightViolet} />
+
           {/* ==================================
-              TOPO
+              CABEÇALHO
           ================================== */}
 
-          <View style={styles.topBar}>
-            <View>
-              <Text style={styles.kicker}>
-                AEROPASSO
-              </Text>
+          <View style={styles.header}>
+            <View style={styles.brandRow}>
+              <Image
+                source={require("../../assets/images/aeropasso.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
 
-              <View style={styles.routeIndicator}>
-                <View style={styles.routeDot} />
-                <View style={styles.routeLine} />
-                <View style={styles.routeDotSmall} />
+              <View>
+                <Text style={styles.brand}>
+                  AeroPasso
+                </Text>
+
+                <Text style={styles.brandMeta}>
+                  ROTAS PARA AEROPORTOS
+                </Text>
               </View>
             </View>
-
-            <Text style={styles.topNumber}>
-              01
-            </Text>
           </View>
 
           {/* ==================================
-              LOGO
+              SAUDAÇÃO
           ================================== */}
 
-          <View style={styles.brandBlock}>
-            <Image
-              source={require("../../assets/images/aeropasso.png")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-
-            <Text style={styles.welcome}>
-              Bem-vindo
+          <View style={styles.intro}>
+            <Text style={styles.greeting}>
+              {greeting}
             </Text>
 
-            <Text style={styles.brandTitle}>
-              Seu próximo destino
+            <Text style={styles.title}>
+              Bem-vindo de volta.
+            </Text>
+
+            <Text style={styles.description}>
+              Entre para continuar sua jornada.
             </Text>
           </View>
 
@@ -200,24 +215,8 @@ export default function LoginScreen({ navigation }: any) {
           ================================== */}
 
           <View style={styles.formCard}>
-            <View style={styles.cardHeader}>
-              <View>
-                <Text style={styles.cardEyebrow}>
-                  ACESSO
-                </Text>
-
-                <Text style={styles.title}>
-                  Entrar na conta
-                </Text>
-              </View>
-
-              <View style={styles.statusCircle}>
-                <View style={styles.statusDot} />
-              </View>
-            </View>
-
-            <Text style={styles.description}>
-              Continue sua jornada pelo AeroPasso.
+            <Text style={styles.cardTitle}>
+              Entrar
             </Text>
 
             {/* E-MAIL */}
@@ -229,9 +228,9 @@ export default function LoginScreen({ navigation }: any) {
 
               <View
                 style={[
-                  styles.inputContainer,
+                  styles.inputWrapper,
                   emailError
-                    ? styles.inputContainerError
+                    ? styles.inputError
                     : null,
                 ]}
               >
@@ -241,7 +240,7 @@ export default function LoginScreen({ navigation }: any) {
                   onChangeText={handleEmailChange}
                   onBlur={validateEmail}
                   placeholder="seu@email.com"
-                  placeholderTextColor="#536A79"
+                  placeholderTextColor="#566A76"
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -250,10 +249,6 @@ export default function LoginScreen({ navigation }: any) {
                   maxLength={120}
                   returnKeyType="next"
                 />
-
-                <Text style={styles.inputMark}>
-                  @
-                </Text>
               </View>
 
               {emailError ? (
@@ -277,16 +272,16 @@ export default function LoginScreen({ navigation }: any) {
                   }
                 >
                   <Text style={styles.forgot}>
-                    Esqueci
+                    Esqueci a senha
                   </Text>
                 </Pressable>
               </View>
 
               <View
                 style={[
-                  styles.inputContainer,
+                  styles.inputWrapper,
                   passwordError
-                    ? styles.inputContainerError
+                    ? styles.inputError
                     : null,
                 ]}
               >
@@ -296,7 +291,7 @@ export default function LoginScreen({ navigation }: any) {
                   onChangeText={handlePasswordChange}
                   onBlur={validatePassword}
                   placeholder="Digite sua senha"
-                  placeholderTextColor="#536A79"
+                  placeholderTextColor="#566A76"
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -308,13 +303,13 @@ export default function LoginScreen({ navigation }: any) {
                 />
 
                 <Pressable
-                  style={styles.inputAction}
                   onPress={() =>
                     setShowPassword(!showPassword)
                   }
+                  style={styles.showButton}
                 >
-                  <Text style={styles.inputActionText}>
-                    {showPassword ? "OCULTAR" : "VER"}
+                  <Text style={styles.showButtonText}>
+                    {showPassword ? "Ocultar" : "Ver"}
                   </Text>
                 </Pressable>
               </View>
@@ -350,67 +345,68 @@ export default function LoginScreen({ navigation }: any) {
 
             {/* BOTÃO */}
 
-            <Pressable
-              style={({ pressed }) => [
-                styles.button,
-                pressed && styles.buttonPressed,
-              ]}
-              onPress={handleLogin}
+            <Animated.View
+              style={{
+                transform: [
+                  {
+                    scale: buttonScale,
+                  },
+                ],
+              }}
             >
-              <View style={styles.buttonLeft}>
-                <Text style={styles.buttonIndex}>
-                  01
-                </Text>
-
+              <Pressable
+                style={styles.button}
+                onPress={pressLogin}
+              >
                 <Text style={styles.buttonText}>
                   ENTRAR
                 </Text>
-              </View>
 
-              <Text style={styles.arrow}>
-                ↗
-              </Text>
-            </Pressable>
-
-            {/* CADASTRO */}
-
-            <View style={styles.registerBlock}>
-              <Text style={styles.registerText}>
-                Ainda não faz parte da jornada?
-              </Text>
-
-              <Pressable
-                onPress={() =>
-                  navigation.navigate("Register")
-                }
-              >
-                <Text style={styles.registerLink}>
-                  Criar uma conta →
+                <Text style={styles.buttonArrow}>
+                  →
                 </Text>
               </Pressable>
-            </View>
+            </Animated.View>
           </View>
 
           {/* ==================================
-              RODAPÉ
+              CADASTRO
+          ================================== */}
+
+          <View style={styles.register}>
+            <Text style={styles.registerText}>
+              Ainda não possui uma conta?
+            </Text>
+
+            <Pressable
+              onPress={() =>
+                navigation.navigate("Register")
+              }
+            >
+              <Text style={styles.registerLink}>
+                Criar conta
+              </Text>
+            </Pressable>
+          </View>
+
+          {/* ==================================
+              FOOTER
           ================================== */}
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>
-              ROTAS PARA AEROPORTOS
+              AEROPASSO
             </Text>
 
-            <View style={styles.footerLine} />
+            <Text style={styles.footerVersion}>
+              01
+            </Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
-
-// ==========================================
-// REQUISITO DA SENHA
-// ==========================================
 
 function PasswordRequirement({
   valid,
@@ -423,10 +419,10 @@ function PasswordRequirement({
     <View style={styles.requirement}>
       <View
         style={[
-          styles.requirementDot,
+          styles.dot,
           valid
-            ? styles.requirementDotValid
-            : styles.requirementDotInvalid,
+            ? styles.dotValid
+            : styles.dotInvalid,
         ]}
       />
 
@@ -434,7 +430,7 @@ function PasswordRequirement({
         style={[
           styles.requirementText,
           valid
-            ? styles.requirementTextValid
+            ? styles.requirementValid
             : null,
         ]}
       >
@@ -444,14 +440,10 @@ function PasswordRequirement({
   );
 }
 
-// ==========================================
-// ESTILOS
-// ==========================================
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#050A12",
+    backgroundColor: "#0D0D0E",
   },
 
   keyboard: {
@@ -460,192 +452,142 @@ const styles = StyleSheet.create({
 
   content: {
     flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingTop: 26,
-    paddingBottom: 24,
+    paddingHorizontal: 22,
+    paddingTop: 25,
+    paddingBottom: 28,
+    overflow: "hidden",
   },
 
-  // ========================================
-  // TOPO
-  // ========================================
-
-  topBar: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    marginBottom: 28,
+  lightBlue: {
+    position: "absolute",
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    backgroundColor: "rgba(35,105,255,0.055)",
+    top: -110,
+    right: -130,
   },
 
-  kicker: {
-    fontSize: 9,
-    fontWeight: "900",
-    letterSpacing: 2.8,
-    color: "#6E8A9E",
+  lightViolet: {
+    position: "absolute",
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: "rgba(125,76,255,0.045)",
+    bottom: 80,
+    left: -170,
   },
 
-  routeIndicator: {
+  header: {
+    marginBottom: 42,
+  },
+
+  brandRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
-  },
-
-  routeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#22D3EE",
-  },
-
-  routeLine: {
-    width: 42,
-    height: 1,
-    marginHorizontal: 5,
-    backgroundColor: "#1B5065",
-  },
-
-  routeDotSmall: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#536A79",
-  },
-
-  topNumber: {
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 2,
-    color: "#3D5566",
-  },
-
-  // ========================================
-  // MARCA
-  // ========================================
-
-  brandBlock: {
-    alignItems: "center",
-    marginBottom: 34,
   },
 
   logo: {
-    width: 106,
-    height: 106,
-    marginBottom: 4,
+    width: 44,
+    height: 44,
+    marginRight: 11,
   },
 
-  welcome: {
-    marginTop: 6,
-    fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 2,
-    color: "#22D3EE",
-    textTransform: "uppercase",
-  },
-
-  brandTitle: {
-    marginTop: 7,
+  brand: {
     fontSize: 20,
-    fontWeight: "700",
+    fontWeight: "800",
     color: "#FFFFFF",
-    letterSpacing: -0.3,
+    letterSpacing: -0.5,
   },
 
-  // ========================================
-  // CARD
-  // ========================================
-
-  formCard: {
-    width: "100%",
-    borderRadius: 22,
-    backgroundColor: "#071522",
-    borderWidth: 1,
-    borderColor: "#122A3A",
-    paddingHorizontal: 20,
-    paddingTop: 21,
-    paddingBottom: 22,
+  brandMeta: {
+    marginTop: 2,
+    fontSize: 6.5,
+    fontWeight: "800",
+    letterSpacing: 1.5,
+    color: "#617581",
   },
 
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+  intro: {
+    marginBottom: 27,
   },
 
-  cardEyebrow: {
-    fontSize: 8,
-    fontWeight: "900",
-    letterSpacing: 2.4,
+  greeting: {
+    fontSize: 13,
+    fontWeight: "700",
     color: "#22D3EE",
-    marginBottom: 5,
+    marginBottom: 8,
   },
 
   title: {
-    fontSize: 25,
+    fontSize: 36,
+    lineHeight: 40,
     fontWeight: "800",
+    letterSpacing: -1.2,
     color: "#FFFFFF",
-    letterSpacing: -0.7,
-  },
-
-  statusCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "#1B5065",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  statusDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: "#22D3EE",
   },
 
   description: {
-    marginTop: 7,
-    marginBottom: 25,
+    marginTop: 9,
     fontSize: 12,
-    lineHeight: 18,
-    color: "#6E8A9E",
+    color: "#70848F",
   },
 
-  // ========================================
-  // CAMPOS
-  // ========================================
+  formCard: {
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.075)",
+    backgroundColor: "rgba(16,24,31,0.84)",
+    paddingHorizontal: 18,
+    paddingTop: 21,
+    paddingBottom: 20,
+    overflow: "hidden",
+  },
+
+  cardTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: "#FFFFFF",
+    marginBottom: 22,
+  },
 
   field: {
-    marginBottom: 19,
+    marginBottom: 20,
   },
 
   labelRow: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 8,
+    alignItems: "center",
   },
 
   label: {
     marginBottom: 8,
     fontSize: 8,
     fontWeight: "900",
-    letterSpacing: 2,
-    color: "#6E8A9E",
+    letterSpacing: 1.8,
+    color: "#748994",
   },
 
-  inputContainer: {
-    height: 52,
+  forgot: {
+    marginBottom: 8,
+    fontSize: 8,
+    fontWeight: "700",
+    color: "#22D3EE",
+  },
+
+  inputWrapper: {
+    height: 54,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "#20343F",
+    backgroundColor: "rgba(5,10,18,0.72)",
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#182C3B",
-    backgroundColor: "#050A12",
-    paddingLeft: 14,
-    paddingRight: 13,
+    paddingHorizontal: 13,
   },
 
-  inputContainerError: {
+  inputError: {
     borderColor: "#E45E6C",
   },
 
@@ -656,49 +598,28 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
 
-  inputMark: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#3D5566",
+  showButton: {
+    paddingLeft: 10,
   },
 
-  inputAction: {
-    paddingLeft: 12,
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  inputActionText: {
+  showButtonText: {
     fontSize: 8,
     fontWeight: "900",
-    letterSpacing: 1,
-    color: "#22D3EE",
-  },
-
-  forgot: {
-    marginBottom: 8,
-    fontSize: 9,
-    fontWeight: "800",
+    letterSpacing: 0.8,
     color: "#22D3EE",
   },
 
   error: {
     marginTop: 6,
-    marginLeft: 2,
-    fontSize: 10,
+    fontSize: 9,
     color: "#E45E6C",
   },
-
-  // ========================================
-  // REQUISITOS
-  // ========================================
 
   requirements: {
     flexDirection: "row",
     flexWrap: "wrap",
-    columnGap: 14,
-    rowGap: 7,
+    columnGap: 13,
+    rowGap: 6,
     marginTop: 9,
   },
 
@@ -707,121 +628,86 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  requirementDot: {
+  dot: {
     width: 5,
     height: 5,
     borderRadius: 3,
     marginRight: 5,
   },
 
-  requirementDotInvalid: {
-    backgroundColor: "#3D5566",
+  dotInvalid: {
+    backgroundColor: "#3D505A",
   },
 
-  requirementDotValid: {
+  dotValid: {
     backgroundColor: "#22D3EE",
   },
 
   requirementText: {
-    fontSize: 8,
-    color: "#3D5566",
+    fontSize: 7.5,
+    color: "#506671",
   },
 
-  requirementTextValid: {
-    color: "#6E8A9E",
+  requirementValid: {
+    color: "#8399A4",
   },
-
-  // ========================================
-  // BOTÃO
-  // ========================================
 
   button: {
-    height: 57,
-    borderRadius: 13,
+    height: 56,
+    borderRadius: 17,
     backgroundColor: "#22D3EE",
-    paddingHorizontal: 15,
+    paddingHorizontal: 17,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 2,
-  },
-
-  buttonPressed: {
-    opacity: 0.78,
-  },
-
-  buttonLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  buttonIndex: {
-    fontSize: 8,
-    fontWeight: "900",
-    letterSpacing: 1,
-    color: "#0A1821",
-    marginRight: 12,
-    opacity: 0.55,
   },
 
   buttonText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: "900",
     letterSpacing: 2,
-    color: "#050A12",
+    color: "#041018",
   },
 
-  arrow: {
-    fontSize: 24,
-    fontWeight: "400",
-    color: "#050A12",
+  buttonArrow: {
+    fontSize: 22,
+    color: "#041018",
   },
 
-  // ========================================
-  // CADASTRO
-  // ========================================
-
-  registerBlock: {
-    marginTop: 21,
-    paddingTop: 17,
-    borderTopWidth: 1,
-    borderTopColor: "#122A3A",
+  register: {
     alignItems: "center",
+    marginTop: 24,
   },
 
   registerText: {
     fontSize: 10,
-    color: "#536A79",
+    color: "#536873",
   },
 
   registerLink: {
-    marginTop: 6,
+    marginTop: 5,
     fontSize: 11,
     fontWeight: "800",
     color: "#22D3EE",
   },
 
-  // ========================================
-  // FOOTER
-  // ========================================
-
   footer: {
+    marginTop: "auto",
+    paddingTop: 28,
+    flexDirection: "row",
     alignItems: "center",
-    marginTop: 27,
   },
 
   footerText: {
     fontSize: 7,
-    fontWeight: "800",
-    letterSpacing: 2.3,
-    color: "#3D5566",
+    fontWeight: "900",
+    letterSpacing: 2,
+    color: "#3A4E59",
   },
 
-  footerLine: {
-    width: 45,
-    height: 1,
-    backgroundColor: "#22D3EE",
-    marginTop: 8,
-    opacity: 0.6,
+  footerVersion: {
+    marginLeft: "auto",
+    fontSize: 7,
+    color: "#324650",
   },
 });

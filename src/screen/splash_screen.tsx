@@ -10,203 +10,252 @@ import {
 } from "react-native";
 
 export default function SplashScreen({ navigation }: any) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.82)).current;
-  const translateY = useRef(new Animated.Value(35)).current;
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const logoScale = useRef(new Animated.Value(0.82)).current;
+  const contentOpacity = useRef(new Animated.Value(0)).current;
+  const contentY = useRef(new Animated.Value(20)).current;
 
-  const lightX = useRef(new Animated.Value(-1)).current;
-  const lineWidth = useRef(new Animated.Value(0)).current;
+  const orbOne = useRef(new Animated.Value(0)).current;
+  const orbTwo = useRef(new Animated.Value(0)).current;
+  const orbThree = useRef(new Animated.Value(0)).current;
+
+  const routeProgress = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(opacity, {
+      Animated.timing(logoOpacity, {
         toValue: 1,
-        duration: 900,
+        duration: 850,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
 
-      Animated.spring(scale, {
+      Animated.spring(logoScale, {
         toValue: 1,
         friction: 7,
-        tension: 45,
+        tension: 38,
         useNativeDriver: true,
       }),
 
-      Animated.timing(translateY, {
-        toValue: 0,
+      Animated.timing(contentOpacity, {
+        toValue: 1,
         duration: 900,
+        delay: 350,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
 
-      Animated.timing(lineWidth, {
+      Animated.timing(contentY, {
+        toValue: 0,
+        duration: 900,
+        delay: 350,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+
+      Animated.timing(routeProgress, {
         toValue: 1,
         duration: 1300,
-        delay: 400,
+        delay: 700,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: false,
       }),
 
-      Animated.timing(lightX, {
-        toValue: 1,
-        duration: 1800,
-        delay: 300,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }),
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(orbOne, {
+            toValue: 1,
+            duration: 2200,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(orbOne, {
+            toValue: 0,
+            duration: 2200,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ])
+      ),
+
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(orbTwo, {
+            toValue: 1,
+            duration: 2800,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(orbTwo, {
+            toValue: 0,
+            duration: 2800,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ])
+      ),
+
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(orbThree, {
+            toValue: 1,
+            duration: 3200,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(orbThree, {
+            toValue: 0,
+            duration: 3200,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ])
+      ),
     ]).start();
 
     const timer = setTimeout(() => {
       navigation.replace("Login");
-    }, 7000);
+    }, 5600);
 
     return () => {
       clearTimeout(timer);
     };
   }, [navigation]);
 
-  const lightTranslate = lightX.interpolate({
-    inputRange: [-1, 1],
-    outputRange: [-450, 450],
+  const orbOneY = orbOne.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -18],
   });
 
-  const animatedLineWidth = lineWidth.interpolate({
+  const orbTwoY = orbTwo.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 22],
+  });
+
+  const orbThreeY = orbThree.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -12],
+  });
+
+  const routeWidth = routeProgress.interpolate({
     inputRange: [0, 1],
     outputRange: ["0%", "100%"],
   });
 
   return (
     <View style={styles.container}>
-
-      {/* BACKGROUND DO AEROPORTO */}
       <ImageBackground
         source={require("../../assets/images/backsplash.png")}
         style={styles.background}
         resizeMode="cover"
       >
+        <View style={styles.imageOverlay} />
 
-        {/* Escurecimento geral para melhorar a leitura */}
-        <View style={styles.darkOverlay} />
-
-        {/* Degradê azul inspirado na identidade do AeroPasso */}
-        <View style={styles.blueOverlay} />
-
-        {/* Brilho azul */}
-        <View style={styles.blueGlow} />
-
-        {/* Feixe de luz animado */}
+        {/* Luzes ambientais */}
         <Animated.View
           style={[
-            styles.lightBeam,
+            styles.orb,
+            styles.orbBlue,
             {
-              transform: [
-                {
-                  translateX: lightTranslate,
-                },
-                {
-                  rotate: "-25deg",
-                },
-              ],
+              transform: [{ translateY: orbOneY }],
             },
           ]}
         />
 
-        {/* TEXTO SUPERIOR */}
         <Animated.View
           style={[
-            styles.topContent,
+            styles.orb,
+            styles.orbViolet,
             {
-              opacity,
+              transform: [{ translateY: orbTwoY }],
             },
           ]}
-        >
-          <View style={styles.statusDot} />
+        />
 
-          <Text style={styles.topText}>
-            SEU CAMINHO PELO AEROPORTO
-          </Text>
-        </Animated.View>
-
-        {/* LOGO */}
         <Animated.View
           style={[
-            styles.logoArea,
+            styles.orb,
+            styles.orbCyan,
             {
-              opacity,
-              transform: [
-                {
-                  scale,
-                },
-                {
-                  translateY,
-                },
-              ],
+              transform: [{ translateY: orbThreeY }],
             },
           ]}
-        >
-          <View style={styles.logoGlow} />
+        />
 
-          <Image
-            source={require("../../assets/images/aeropasso.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </Animated.View>
+        {/* brilho central */}
+        <View style={styles.centerGlow} />
 
-        {/* NOME */}
-        <Animated.View
-          style={[
-            styles.brandArea,
-            {
-              opacity,
-              transform: [
-                {
-                  translateY,
-                },
-              ],
-            },
-          ]}
-        >
-          <Text style={styles.brand}>
-            AeroPasso
-          </Text>
-
-          <Text style={styles.description}>
-            ROTAS PARA AEROPORTOS
-          </Text>
-        </Animated.View>
-
-        {/* LINHA ANIMADA */}
-        <View style={styles.lineContainer}>
-          <Animated.View
-            style={[
-              styles.line,
-              {
-                width: animatedLineWidth,
-              },
-            ]}
-          />
-        </View>
-
-        {/* RODAPÉ */}
-        <Animated.View
-          style={[
-            styles.footer,
-            {
-              opacity,
-            },
-          ]}
-        >
-          <Text style={styles.footerText}>
+        {/* topo */}
+        <View style={styles.topBar}>
+          <Text style={styles.topBrand}>
             AEROPASSO
           </Text>
 
-          <Text style={styles.version}>
+          <Text style={styles.topMeta}>
             01
           </Text>
-        </Animated.View>
+        </View>
 
+        {/* conteúdo */}
+        <View style={styles.center}>
+          <Animated.View
+            style={[
+              styles.logoContainer,
+              {
+                opacity: logoOpacity,
+                transform: [{ scale: logoScale }],
+              },
+            ]}
+          >
+            <Image
+              source={require("../../assets/images/aeropasso.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </Animated.View>
+
+          <Animated.View
+            style={[
+              styles.textContainer,
+              {
+                opacity: contentOpacity,
+                transform: [{ translateY: contentY }],
+              },
+            ]}
+          >
+            <Text style={styles.brand}>
+              AeroPasso
+            </Text>
+
+            <Text style={styles.subtitle}>
+              Seu caminho começa aqui.
+            </Text>
+
+            <View style={styles.route}>
+              <Animated.View
+                style={[
+                  styles.routeFill,
+                  {
+                    width: routeWidth,
+                  },
+                ]}
+              />
+
+              <View style={styles.routeEnd} />
+            </View>
+          </Animated.View>
+        </View>
+
+        {/* rodapé */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            ROTAS PARA AEROPORTOS
+          </Text>
+
+          <Text style={styles.footerVersion}>
+            2026
+          </Text>
+        </View>
       </ImageBackground>
     </View>
   );
@@ -215,181 +264,163 @@ export default function SplashScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#031B5B",
+    backgroundColor: "#0D0D0E",
   },
 
   background: {
     flex: 1,
     width: "100%",
     height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
   },
 
-  /*
-   * Camada escura.
-   * Deixa a foto mais elegante e permite
-   * que a logo apareça com mais força.
-   */
-  darkOverlay: {
+  imageOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 8, 30, 0.48)",
+    backgroundColor: "rgba(5, 8, 18, 0.60)",
   },
 
-  /*
-   * Azul da identidade visual do AeroPasso.
-   */
-  blueOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 55, 150, 0.16)",
-  },
-
-  blueGlow: {
+  orb: {
     position: "absolute",
-    width: 450,
-    height: 450,
-    borderRadius: 225,
-    backgroundColor: "#00BFFF",
-    opacity: 0.08,
-    top: -200,
-    right: -180,
+    borderRadius: 999,
   },
 
-  lightBeam: {
-    position: "absolute",
-    width: 90,
-    height: "150%",
-    backgroundColor: "#FFFFFF",
-    opacity: 0.025,
-  },
-
-  /*
-   * TEXTO SUPERIOR
-   */
-  topContent: {
-    position: "absolute",
-    top: 65,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-
-  statusDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: "#22D3EE",
-    marginRight: 9,
-  },
-
-  topText: {
-    fontSize: 9,
-    fontWeight: "700",
-    letterSpacing: 2.2,
-    color: "#D5F6FF",
-  },
-
-  /*
-   * LOGO
-   */
-  logoArea: {
-    width: 280,
-    height: 280,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  logoGlow: {
-    position: "absolute",
+  orbBlue: {
     width: 210,
     height: 210,
-    borderRadius: 105,
-    backgroundColor: "#00D5FF",
-    opacity: 0.13,
+    backgroundColor: "rgba(35, 105, 255, 0.13)",
+    top: 90,
+    left: -80,
+  },
+
+  orbViolet: {
+    width: 260,
+    height: 260,
+    backgroundColor: "rgba(125, 76, 255, 0.10)",
+    bottom: 80,
+    right: -130,
+  },
+
+  orbCyan: {
+    width: 160,
+    height: 160,
+    backgroundColor: "rgba(34, 211, 238, 0.10)",
+    top: "42%",
+    right: -80,
+  },
+
+  centerGlow: {
+    position: "absolute",
+    width: 230,
+    height: 230,
+    borderRadius: 115,
+    backgroundColor: "rgba(34, 211, 238, 0.045)",
+    top: "38%",
+    left: "50%",
+    marginLeft: -115,
+    marginTop: -115,
+  },
+
+  topBar: {
+    position: "absolute",
+    top: 56,
+    left: 27,
+    right: 27,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  topBrand: {
+    fontSize: 9,
+    fontWeight: "900",
+    letterSpacing: 3,
+    color: "#FFFFFF",
+  },
+
+  topMeta: {
+    fontSize: 9,
+    fontWeight: "800",
+    letterSpacing: 1.5,
+    color: "#8AA0AE",
+  },
+
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  logoContainer: {
+    width: 145,
+    height: 145,
+    marginBottom: 10,
   },
 
   logo: {
-    width: 250,
-    height: 250,
+    width: "100%",
+    height: "100%",
   },
 
-  /*
-   * MARCA
-   */
-  brandArea: {
+  textContainer: {
     alignItems: "center",
-    marginTop: -15,
   },
 
   brand: {
-    fontSize: 36,
+    fontSize: 40,
     fontWeight: "800",
-    letterSpacing: -1,
+    letterSpacing: -1.4,
     color: "#FFFFFF",
-
-    // Pequena sombra para separar da fotografia
-    textShadowColor: "rgba(0, 0, 0, 0.55)",
-    textShadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    textShadowRadius: 8,
   },
 
-  description: {
-    marginTop: 8,
-    fontSize: 9,
-    fontWeight: "700",
-    letterSpacing: 3.2,
-    color: "#B9EEFF",
-
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    textShadowRadius: 5,
+  subtitle: {
+    marginTop: 7,
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#B4C7D0",
   },
 
-  /*
-   * LINHA
-   */
-  lineContainer: {
-    position: "absolute",
-    bottom: 90,
-    width: 100,
-    height: 1,
-    backgroundColor: "rgba(255,255,255,0.25)",
-    overflow: "hidden",
+  route: {
+    width: 120,
+    height: 2,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    marginTop: 24,
+    flexDirection: "row",
+    alignItems: "center",
   },
 
-  line: {
-    height: 1,
+  routeFill: {
+    height: 2,
     backgroundColor: "#22D3EE",
   },
 
-  /*
-   * RODAPÉ
-   */
+  routeEnd: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#22D3EE",
+    marginLeft: 4,
+  },
+
   footer: {
     position: "absolute",
-    bottom: 35,
-    width: "82%",
+    left: 27,
+    right: 27,
+    bottom: 31,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
 
   footerText: {
-    fontSize: 8,
-    fontWeight: "700",
-    letterSpacing: 2,
-    color: "rgba(255,255,255,0.65)",
+    fontSize: 7,
+    fontWeight: "800",
+    letterSpacing: 1.9,
+    color: "#A0B3BC",
   },
 
-  version: {
-    fontSize: 8,
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.65)",
+  footerVersion: {
+    fontSize: 7,
+    fontWeight: "700",
+    letterSpacing: 1.2,
+    color: "#627580",
   },
 });
