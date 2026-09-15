@@ -1,5 +1,8 @@
 import React, { useRef, useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../services/firebaseConfig";
 import {
+  Alert,
   Animated,
   Easing,
   KeyboardAvoidingView,
@@ -115,19 +118,87 @@ export default function LoginScreen({ navigation }: any) {
     return true;
   };
 
-  const handleLogin = () => {
-    const validEmail = validateEmail();
-    const validPassword = validatePassword();
+  const handleLogin = async () => {
+  const validEmail = validateEmail();
+  const validPassword = validatePassword();
 
-    if (!validEmail || !validPassword) {
-      return;
+  if (!validEmail || !validPassword) {
+    Alert.alert(
+      "Atenção",
+      "Por favor, verifique os dados informados."
+    );
+
+    return;
+  }
+
+  try {
+    console.log(
+      "Tentando autenticar no Firebase..."
+    );
+
+    const userCredential =
+      await signInWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password
+      );
+
+    console.log(
+      "Login realizado:",
+      userCredential.user.uid
+    );
+
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: "Dashboard",
+        },
+      ],
+    });
+  } catch (error: any) {
+    console.log(
+      "Erro no login Firebase:",
+      error
+    );
+
+    let mensagem =
+      "Não foi possível realizar o login.";
+
+    if (
+      error.code === "auth/invalid-credential" ||
+      error.code === "auth/invalid-login-credentials"
+    ) {
+      mensagem =
+        "E-mail ou senha incorretos.";
+    } else if (
+      error.code === "auth/user-not-found"
+    ) {
+      mensagem =
+        "Usuário não encontrado.";
+    } else if (
+      error.code === "auth/wrong-password"
+    ) {
+      mensagem =
+        "Senha incorreta.";
+    } else if (
+      error.code === "auth/invalid-email"
+    ) {
+      mensagem =
+        "E-mail inválido.";
+    } else if (
+      error.code === "auth/too-many-requests"
+    ) {
+      mensagem =
+        "Muitas tentativas de login. Aguarde alguns minutos.";
     }
 
-    console.log("Login realizado:", {
-      email,
-      password,
-    });
-  };
+    Alert.alert(
+      "Não foi possível entrar",
+      mensagem
+    );
+  }
+};
 
   const pressLogin = () => {
     Animated.sequence([
