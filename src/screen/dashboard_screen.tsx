@@ -33,7 +33,6 @@ export default function DashboardScreen({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
       >
-
         {/* ================================
             TOPO
         ================================= */}
@@ -59,81 +58,10 @@ export default function DashboardScreen({
           </Pressable>
         </View>
 
-
         {/* ================================
             BUSCA DE ROTA
         ================================= */}
 
-        <View style={styles.routeBox}>
-
-          <Text style={styles.routeLabel}>
-            PLANEJE SUA ROTA
-          </Text>
-
-          <Text style={styles.routeTitle}>
-            Chegue ao aeroporto
-            sem complicação.
-          </Text>
-
-          <Text style={styles.routeDescription}>
-            Informe seu ponto de partida e
-            encontre o melhor caminho.
-          </Text>
-
-
-          {/* ORIGEM */}
-
-          <View style={styles.locationBox}>
-            <View style={styles.locationIcon}>
-              <Text style={styles.locationIconText}>
-                ●
-              </Text>
-            </View>
-
-            <View style={styles.locationContent}>
-              <Text style={styles.locationLabel}>
-                SAINDO DE
-              </Text>
-
-              <Text style={styles.locationPlaceholder}>
-                Sua localização
-              </Text>
-            </View>
-          </View>
-
-
-          {/* DESTINO */}
-
-          <View style={styles.locationBox}>
-            <View style={styles.airportIcon}>
-              <Text style={styles.airportIconText}>
-                ✈
-              </Text>
-            </View>
-
-            <View style={styles.locationContent}>
-              <Text style={styles.locationLabel}>
-                DESTINO
-              </Text>
-
-              <Text style={styles.locationPlaceholder}>
-                Escolha um aeroporto
-              </Text>
-            </View>
-          </View>
-
-
-          <Pressable style={styles.routeButton}>
-            <Text style={styles.routeButtonText}>
-              CALCULAR ROTA
-            </Text>
-
-            <Text style={styles.routeButtonArrow}>
-              →
-            </Text>
-          </Pressable>
-
-        </View>
 
 
         {/* ================================
@@ -142,7 +70,7 @@ export default function DashboardScreen({
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>
-            PRÓXIMA VIAGEM
+            PRÓXIMA ROTA DE VIAGEM
           </Text>
 
           <Text style={styles.sectionNumber}>
@@ -150,9 +78,7 @@ export default function DashboardScreen({
           </Text>
         </View>
 
-
         <View style={styles.tripCard}>
-
           <View style={styles.tripTop}>
             <View>
               <Text style={styles.tripLabel}>
@@ -160,11 +86,11 @@ export default function DashboardScreen({
               </Text>
 
               <Text style={styles.tripAirport}>
-                Aeroporto
+                Aeroporto - São Paulo
               </Text>
 
               <Text style={styles.tripCode}>
-                AGUARDANDO DESTINO
+                AGUARDANDO SEU PONTO ATUAL
               </Text>
             </View>
 
@@ -173,7 +99,6 @@ export default function DashboardScreen({
             </Text>
           </View>
 
-
           <View style={styles.tripLine}>
             <View style={styles.lineDot} />
 
@@ -181,7 +106,6 @@ export default function DashboardScreen({
 
             <View style={styles.lineDot} />
           </View>
-
 
           <View style={styles.tripBottom}>
             <View>
@@ -204,9 +128,7 @@ export default function DashboardScreen({
               </Text>
             </View>
           </View>
-
         </View>
-
 
         {/* ================================
             ACESSOS
@@ -216,9 +138,7 @@ export default function DashboardScreen({
           ACESSOS
         </Text>
 
-
         <View style={styles.accessRow}>
-
           <Pressable style={styles.accessCard}>
             <Text style={styles.accessIcon}>
               ☆
@@ -233,7 +153,6 @@ export default function DashboardScreen({
             </Text>
           </Pressable>
 
-
           <Pressable style={styles.accessCard}>
             <Text style={styles.accessIcon}>
               ◉
@@ -247,16 +166,13 @@ export default function DashboardScreen({
               Rotas anteriores
             </Text>
           </Pressable>
-
         </View>
-
 
         {/* ================================
             DICA
         ================================= */}
 
         <View style={styles.tip}>
-
           <View style={styles.tipIcon}>
             <Text style={styles.tipIconText}>
               !
@@ -265,17 +181,16 @@ export default function DashboardScreen({
 
           <View style={styles.tipContent}>
             <Text style={styles.tipTitle}>
-              Dica AeroPasso
+              ORIENTAÇÃO:
             </Text>
 
             <Text style={styles.tipText}>
-              Planeje sua rota antes de sair
-              para evitar imprevistos no caminho.
+              Caso tenha algum problema
+              {"\n"}
+              com a sua rota, entre em contato
             </Text>
           </View>
-
         </View>
-
 
         {/* ================================
             SAIR
@@ -290,19 +205,78 @@ export default function DashboardScreen({
           </Text>
         </Pressable>
 
-
         <Text style={styles.footer}>
           AEROPASSO • ROTAS PARA AEROPORTOS
         </Text>
-
       </ScrollView>
+
+      {/* ==================================================
+          HOTBAR DE NAVEGAÇÃO — ESTÉTICA
+      ================================================== */}
+
+      <View style={styles.hotbarContainer}>
+        <View style={styles.hotbar}>
+
+          {/* MAPA */}
+          <View style={[styles.navItem, styles.activeNavItem]}>
+            <View style={styles.mapIcon}>
+              <View style={styles.mapLineOne} />
+              <View style={styles.mapLineTwo} />
+              <View style={styles.mapDot} />
+            </View>
+
+            <Text style={styles.activeNavText}>
+              Home
+            </Text>
+
+            <View style={styles.activeIndicator} />
+          </View>
+
+          {/* ROTAS */}
+          <View style={styles.navItem}>
+            <View style={styles.compassIcon}>
+              <View style={styles.compassOuter}>
+                <View style={styles.compassNeedle} />
+              </View>
+            </View>
+
+            <Text style={styles.navText}>
+              Rotas
+            </Text>
+          </View>
+
+          {/* EXPLORAR */}
+          <View style={styles.navItem}>
+            <View style={styles.planeIcon}>
+              <Text style={styles.planeSymbol}>
+                ✈
+              </Text>
+            </View>
+
+            <Text style={styles.navText}>
+              Explorar
+            </Text>
+          </View>
+
+          {/* PERFIL */}
+          <View style={styles.navItem}>
+            <View style={styles.profileIcon}>
+              <View style={styles.profileHead} />
+              <View style={styles.profileBody} />
+            </View>
+
+            <Text style={styles.navText}>
+              Perfil
+            </Text>
+          </View>
+
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
 
-
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: "#0D0D0E",
@@ -311,9 +285,11 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 21,
     paddingTop: 25,
-    paddingBottom: 35,
-  },
 
+    // Espaço extra para a hotbar não cobrir
+    // o conteúdo final da página.
+    paddingBottom: 125,
+  },
 
   // ================================
   // TOPO
@@ -356,7 +332,6 @@ const styles = StyleSheet.create({
     color: "#22D3EE",
   },
 
-
   // ================================
   // ROTA
   // ================================
@@ -390,7 +365,6 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     color: "#6D818D",
   },
-
 
   // ================================
   // LOCALIZAÇÃO
@@ -453,7 +427,6 @@ const styles = StyleSheet.create({
     color: "#A1B2BA",
   },
 
-
   // ================================
   // BOTÃO ROTA
   // ================================
@@ -480,7 +453,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#041018",
   },
-
 
   // ================================
   // PRÓXIMA VIAGEM
@@ -597,7 +569,6 @@ const styles = StyleSheet.create({
     color: "#718793",
   },
 
-
   // ================================
   // ACESSOS
   // ================================
@@ -643,7 +614,6 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: "#607580",
   },
-
 
   // ================================
   // DICA
@@ -692,7 +662,6 @@ const styles = StyleSheet.create({
     color: "#607580",
   },
 
-
   // ================================
   // SAIR
   // ================================
@@ -714,7 +683,6 @@ const styles = StyleSheet.create({
     color: "#718793",
   },
 
-
   // ================================
   // FOOTER
   // ================================
@@ -726,5 +694,199 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 1.6,
     color: "#344851",
+  },
+
+  // ================================
+  // HOTBAR
+  // ================================
+
+  hotbarContainer: {
+    position: "absolute",
+    left: 17,
+    right: 17,
+    bottom: 12,
+  },
+
+  hotbar: {
+    height: 75,
+    borderRadius: 24,
+    backgroundColor: "rgba(12, 18, 25, 0.97)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.09)",
+
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.4,
+    shadowRadius: 18,
+
+    elevation: 12,
+  },
+
+  navItem: {
+    height: 69,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+
+  activeNavItem: {
+    backgroundColor: "rgba(34,211,238,0.055)",
+    borderRadius: 18,
+    marginVertical: 5,
+  },
+
+  // ================================
+  // HOTBAR TEXTOS
+  // ================================
+
+  navText: {
+    marginTop: 5,
+    fontSize: 9,
+    fontWeight: "700",
+    color: "#71828D",
+  },
+
+  activeNavText: {
+    marginTop: 5,
+    fontSize: 9,
+    fontWeight: "800",
+    color: "#22D3EE",
+  },
+
+  activeIndicator: {
+    position: "absolute",
+    bottom: 4,
+    width: 20,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: "#22D3EE",
+  },
+
+  // ================================
+  // ÍCONE MAPA
+  // ================================
+
+  mapIcon: {
+    width: 24,
+    height: 21,
+    borderWidth: 1.5,
+    borderColor: "#22D3EE",
+    borderRadius: 5,
+    position: "relative",
+    overflow: "hidden",
+  },
+
+  mapLineOne: {
+    position: "absolute",
+    width: 1,
+    height: 25,
+    backgroundColor: "#22D3EE",
+    left: 7,
+    top: -2,
+    transform: [{ rotate: "18deg" }],
+  },
+
+  mapLineTwo: {
+    position: "absolute",
+    width: 1,
+    height: 25,
+    backgroundColor: "#22D3EE",
+    right: 7,
+    top: -2,
+    transform: [{ rotate: "18deg" }],
+  },
+
+  mapDot: {
+    position: "absolute",
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: "#FFFFFF",
+    left: 9,
+    top: 7,
+  },
+
+  // ================================
+  // ÍCONE BÚSSOLA
+  // ================================
+
+  compassIcon: {
+    width: 24,
+    height: 21,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  compassOuter: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: "#71828D",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  compassNeedle: {
+    width: 7,
+    height: 7,
+    borderWidth: 1.5,
+    borderColor: "#71828D",
+    transform: [{ rotate: "45deg" }],
+  },
+
+  // ================================
+  // ÍCONE AVIÃO
+  // ================================
+
+  planeIcon: {
+    width: 24,
+    height: 21,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  planeSymbol: {
+    fontSize: 20,
+    color: "#71828D",
+    transform: [{ rotate: "-45deg" }],
+  },
+
+  // ================================
+  // ÍCONE PERFIL
+  // ================================
+
+  profileIcon: {
+    width: 24,
+    height: 21,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  profileHead: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    borderWidth: 1.5,
+    borderColor: "#71828D",
+    marginBottom: 2,
+  },
+
+  profileBody: {
+    width: 16,
+    height: 8,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    borderWidth: 1.5,
+    borderBottomWidth: 0,
+    borderColor: "#71828D",
   },
 });

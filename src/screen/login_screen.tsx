@@ -23,6 +23,7 @@ export default function LoginScreen({ navigation }: any) {
 
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [loginError, setLoginError] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -45,12 +46,18 @@ export default function LoginScreen({ navigation }: any) {
       : "Boa noite";
 
   const handleEmailChange = (text: string) => {
-    const value = text.replace(/\s/g, "").toLowerCase();
+    const value = text
+      .replace(/\s/g, "")
+      .toLowerCase();
 
     setEmail(value);
 
     if (emailError) {
       setEmailError("");
+    }
+
+    if (loginError) {
+      setLoginError("");
     }
   };
 
@@ -59,6 +66,10 @@ export default function LoginScreen({ navigation }: any) {
 
     if (passwordError) {
       setPasswordError("");
+    }
+
+    if (loginError) {
+      setLoginError("");
     }
   };
 
@@ -119,86 +130,88 @@ export default function LoginScreen({ navigation }: any) {
   };
 
   const handleLogin = async () => {
-  const validEmail = validateEmail();
-  const validPassword = validatePassword();
+    setLoginError("");
 
-  if (!validEmail || !validPassword) {
-    Alert.alert(
-      "Atenção",
-      "Por favor, verifique os dados informados."
-    );
+    const validEmail = validateEmail();
+    const validPassword = validatePassword();
 
-    return;
-  }
-
-  try {
-    console.log(
-      "Tentando autenticar no Firebase..."
-    );
-
-    const userCredential =
-      await signInWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password
+    if (!validEmail || !validPassword) {
+      Alert.alert(
+        "Atenção",
+        "Por favor, verifique os dados informados."
       );
 
-    console.log(
-      "Login realizado:",
-      userCredential.user.uid
-    );
-
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: "Dashboard",
-        },
-      ],
-    });
-  } catch (error: any) {
-    console.log(
-      "Erro no login Firebase:",
-      error
-    );
-
-    let mensagem =
-      "Não foi possível realizar o login.";
-
-    if (
-      error.code === "auth/invalid-credential" ||
-      error.code === "auth/invalid-login-credentials"
-    ) {
-      mensagem =
-        "E-mail ou senha incorretos.";
-    } else if (
-      error.code === "auth/user-not-found"
-    ) {
-      mensagem =
-        "Usuário não encontrado.";
-    } else if (
-      error.code === "auth/wrong-password"
-    ) {
-      mensagem =
-        "Senha incorreta.";
-    } else if (
-      error.code === "auth/invalid-email"
-    ) {
-      mensagem =
-        "E-mail inválido.";
-    } else if (
-      error.code === "auth/too-many-requests"
-    ) {
-      mensagem =
-        "Muitas tentativas de login. Aguarde alguns minutos.";
+      return;
     }
 
-    Alert.alert(
-      "Não foi possível entrar",
-      mensagem
-    );
-  }
-};
+    try {
+      console.log(
+        "Tentando autenticar no Firebase..."
+      );
+
+      const userCredential =
+        await signInWithEmailAndPassword(
+          auth,
+          email.trim(),
+          password
+        );
+
+      console.log(
+        "Login realizado:",
+        userCredential.user.uid
+      );
+
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: "Dashboard",
+          },
+        ],
+      });
+    } catch (error: any) {
+      console.log(
+        "Erro no login Firebase:",
+        error
+      );
+
+      let mensagem =
+        "Não foi possível realizar o login.";
+
+      if (
+        error.code === "auth/invalid-credential" ||
+        error.code ===
+          "auth/invalid-login-credentials" ||
+        error.code === "auth/user-not-found" ||
+        error.code === "auth/wrong-password"
+      ) {
+        mensagem =
+          "E-mail ou senha incorretos.";
+      } else if (
+        error.code === "auth/invalid-email"
+      ) {
+        mensagem =
+          "E-mail inválido.";
+      } else if (
+        error.code === "auth/too-many-requests"
+      ) {
+        mensagem =
+          "Muitas tentativas de login. Aguarde alguns minutos e tente novamente.";
+      } else if (
+        error.code === "auth/user-disabled"
+      ) {
+        mensagem =
+          "Não foi possível realizar o login com esses dados.";
+      }
+
+      setLoginError(mensagem);
+
+      Alert.alert(
+        "Não foi possível entrar",
+        mensagem
+      );
+    }
+  };
 
   const pressLogin = () => {
     Animated.sequence([
@@ -234,14 +247,8 @@ export default function LoginScreen({ navigation }: any) {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Luzes discretas */}
-
           <View style={styles.lightBlue} />
           <View style={styles.lightViolet} />
-
-          {/* ==================================
-              CABEÇALHO
-          ================================== */}
 
           <View style={styles.header}>
             <View style={styles.brandRow}>
@@ -263,10 +270,6 @@ export default function LoginScreen({ navigation }: any) {
             </View>
           </View>
 
-          {/* ==================================
-              SAUDAÇÃO
-          ================================== */}
-
           <View style={styles.intro}>
             <Text style={styles.greeting}>
               {greeting}
@@ -281,16 +284,10 @@ export default function LoginScreen({ navigation }: any) {
             </Text>
           </View>
 
-          {/* ==================================
-              FORMULÁRIO
-          ================================== */}
-
           <View style={styles.formCard}>
             <Text style={styles.cardTitle}>
               Entrar
             </Text>
-
-            {/* E-MAIL */}
 
             <View style={styles.field}>
               <Text style={styles.label}>
@@ -329,8 +326,6 @@ export default function LoginScreen({ navigation }: any) {
               ) : null}
             </View>
 
-            {/* SENHA */}
-
             <View style={styles.field}>
               <View style={styles.labelRow}>
                 <Text style={styles.label}>
@@ -341,6 +336,9 @@ export default function LoginScreen({ navigation }: any) {
                   onPress={() =>
                     console.log("Recuperar senha")
                   }
+                  android_ripple={{
+                    color: "transparent",
+                  }}
                 >
                   <Text style={styles.forgot}>
                     Esqueci a senha
@@ -378,6 +376,9 @@ export default function LoginScreen({ navigation }: any) {
                     setShowPassword(!showPassword)
                   }
                   style={styles.showButton}
+                  android_ripple={{
+                    color: "transparent",
+                  }}
                 >
                   <Text style={styles.showButtonText}>
                     {showPassword ? "Ocultar" : "Ver"}
@@ -414,7 +415,25 @@ export default function LoginScreen({ navigation }: any) {
               ) : null}
             </View>
 
-            {/* BOTÃO */}
+            {loginError ? (
+              <View style={styles.loginErrorBox}>
+                <View style={styles.loginErrorIcon}>
+                  <Text style={styles.loginErrorIconText}>
+                    !
+                  </Text>
+                </View>
+
+                <View style={styles.loginErrorContent}>
+                  <Text style={styles.loginErrorTitle}>
+                    Não foi possível entrar
+                  </Text>
+
+                  <Text style={styles.loginErrorText}>
+                    {loginError}
+                  </Text>
+                </View>
+              </View>
+            ) : null}
 
             <Animated.View
               style={{
@@ -428,6 +447,9 @@ export default function LoginScreen({ navigation }: any) {
               <Pressable
                 style={styles.button}
                 onPress={pressLogin}
+                android_ripple={{
+                  color: "transparent",
+                }}
               >
                 <Text style={styles.buttonText}>
                   ENTRAR
@@ -440,10 +462,6 @@ export default function LoginScreen({ navigation }: any) {
             </Animated.View>
           </View>
 
-          {/* ==================================
-              CADASTRO
-          ================================== */}
-
           <View style={styles.register}>
             <Text style={styles.registerText}>
               Ainda não possui uma conta?
@@ -453,16 +471,15 @@ export default function LoginScreen({ navigation }: any) {
               onPress={() =>
                 navigation.navigate("Register")
               }
+              android_ripple={{
+                color: "transparent",
+              }}
             >
               <Text style={styles.registerLink}>
                 Criar conta
               </Text>
             </Pressable>
           </View>
-
-          {/* ==================================
-              FOOTER
-          ================================== */}
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>
@@ -656,6 +673,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 13,
+    outlineStyle: "none" as any,
   },
 
   inputError: {
@@ -667,6 +685,7 @@ const styles = StyleSheet.create({
     height: "100%",
     fontSize: 14,
     color: "#FFFFFF",
+    outlineStyle: "none" as any,
   },
 
   showButton: {
@@ -721,6 +740,51 @@ const styles = StyleSheet.create({
 
   requirementValid: {
     color: "#8399A4",
+  },
+
+  loginErrorBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 18,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(228,94,108,0.35)",
+    backgroundColor: "rgba(228,94,108,0.08)",
+  },
+
+  loginErrorIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+    backgroundColor: "rgba(228,94,108,0.16)",
+  },
+
+  loginErrorIconText: {
+    fontSize: 13,
+    fontWeight: "900",
+    color: "#E45E6C",
+  },
+
+  loginErrorContent: {
+    flex: 1,
+  },
+
+  loginErrorTitle: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: "#FFFFFF",
+    marginBottom: 3,
+  },
+
+  loginErrorText: {
+    fontSize: 9,
+    lineHeight: 14,
+    color: "#C98A92",
   },
 
   button: {
