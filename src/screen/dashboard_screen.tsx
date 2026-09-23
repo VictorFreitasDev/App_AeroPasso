@@ -1,13 +1,14 @@
 import React from "react";
 import {
+  Pressable,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
-  Pressable,
-  ScrollView,
 } from "react-native";
 
+import { Feather } from "@expo/vector-icons";
 import { signOut } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
 
@@ -217,58 +218,43 @@ export default function DashboardScreen({
       <View style={styles.hotbarContainer}>
         <View style={styles.hotbar}>
 
-          {/* MAPA */}
-          <View style={[styles.navItem, styles.activeNavItem]}>
-            <View style={styles.mapIcon}>
-              <View style={styles.mapLineOne} />
-              <View style={styles.mapLineTwo} />
-              <View style={styles.mapDot} />
-            </View>
+          {/* HOME */}
+          <Pressable style={[styles.navItem, styles.activeNavItem]} onPress={() => navigation.navigate("Dashboard")}>
+            <Feather name="home" size={22} color="#22D3EE" />
 
             <Text style={styles.activeNavText}>
               Home
             </Text>
 
             <View style={styles.activeIndicator} />
-          </View>
+          </Pressable>
 
           {/* ROTAS */}
-          <View style={styles.navItem}>
-            <View style={styles.compassIcon}>
-              <View style={styles.compassOuter}>
-                <View style={styles.compassNeedle} />
-              </View>
-            </View>
+          <Pressable style={styles.navItem} onPress={() => navigation.navigate("Rotas")}>
+            <Feather name="map" size={22} color="#71828D" />
 
             <Text style={styles.navText}>
               Rotas
             </Text>
-          </View>
+          </Pressable>
 
-          {/* EXPLORAR */}
-          <View style={styles.navItem}>
-            <View style={styles.planeIcon}>
-              <Text style={styles.planeSymbol}>
-                ✈
-              </Text>
-            </View>
+          {/* API */}
+          <Pressable style={styles.navItem} onPress={() => navigation.navigate("API")}>
+            <Feather name="server" size={22} color="#71828D" />
 
             <Text style={styles.navText}>
-              Explorar
+              API
             </Text>
-          </View>
+          </Pressable>
 
-          {/* PERFIL */}
-          <View style={styles.navItem}>
-            <View style={styles.profileIcon}>
-              <View style={styles.profileHead} />
-              <View style={styles.profileBody} />
-            </View>
+          {/* SAIR */}
+          <Pressable style={styles.navItem} onPress={() => navigation.navigate("Sair")}>
+            <Feather name="log-out" size={22} color="#71828D" />
 
             <Text style={styles.navText}>
-              Perfil
+              SAIR
             </Text>
-          </View>
+          </Pressable>
 
         </View>
       </View>
@@ -770,123 +756,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#22D3EE",
   },
 
-  // ================================
-  // ÍCONE MAPA
-  // ================================
-
-  mapIcon: {
-    width: 24,
-    height: 21,
-    borderWidth: 1.5,
-    borderColor: "#22D3EE",
-    borderRadius: 5,
-    position: "relative",
-    overflow: "hidden",
-  },
-
-  mapLineOne: {
-    position: "absolute",
-    width: 1,
-    height: 25,
-    backgroundColor: "#22D3EE",
-    left: 7,
-    top: -2,
-    transform: [{ rotate: "18deg" }],
-  },
-
-  mapLineTwo: {
-    position: "absolute",
-    width: 1,
-    height: 25,
-    backgroundColor: "#22D3EE",
-    right: 7,
-    top: -2,
-    transform: [{ rotate: "18deg" }],
-  },
-
-  mapDot: {
-    position: "absolute",
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: "#FFFFFF",
-    left: 9,
-    top: 7,
-  },
-
-  // ================================
-  // ÍCONE BÚSSOLA
-  // ================================
-
-  compassIcon: {
-    width: 24,
-    height: 21,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  compassOuter: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: "#71828D",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  compassNeedle: {
-    width: 7,
-    height: 7,
-    borderWidth: 1.5,
-    borderColor: "#71828D",
-    transform: [{ rotate: "45deg" }],
-  },
-
-  // ================================
-  // ÍCONE AVIÃO
-  // ================================
-
-  planeIcon: {
-    width: 24,
-    height: 21,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  planeSymbol: {
-    fontSize: 20,
-    color: "#71828D",
-    transform: [{ rotate: "-45deg" }],
-  },
-
-  // ================================
-  // ÍCONE PERFIL
-  // ================================
-
-  profileIcon: {
-    width: 24,
-    height: 21,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  profileHead: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    borderWidth: 1.5,
-    borderColor: "#71828D",
-    marginBottom: 2,
-  },
-
-  profileBody: {
-    width: 16,
-    height: 8,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    borderWidth: 1.5,
-    borderBottomWidth: 0,
-    borderColor: "#71828D",
-  },
 });

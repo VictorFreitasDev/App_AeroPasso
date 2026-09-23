@@ -6,6 +6,9 @@ import DashboardScreen from "./src/screen/dashboard_screen";
 import registerScreen from "./src/screen/register_screen";
 import SplashScreen from "./src/screen/splash_screen";
 import LoginScreen from "./src/screen/login_screen";
+import Rotas from "./src/screen/rotas_screen";
+import API from "./src/screen/api_screen";
+import sair from "./src/screen/sair_screen";
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +37,18 @@ export default function App() {
         <Stack.Screen
           name="Dashboard"
           component={DashboardScreen}
+        />
+        <Stack.Screen
+          name="Rotas"
+          component={Rotas}
+        />
+        <Stack.Screen
+          name="API"
+          component={API}
+        />
+        <Stack.Screen
+          name="Sair"
+          component={sair}
         />
       </Stack.Navigator>
     </NavigationContainer>
