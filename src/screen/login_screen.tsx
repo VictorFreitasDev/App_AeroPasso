@@ -1,21 +1,21 @@
-import React, { useRef, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../services/firebaseConfig";
+import React, { useRef, useState } from "react";
 import {
-  Alert,
-  Animated,
-  Easing,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Image,
+    Alert,
+    Animated,
+    Easing,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
+import { auth } from "../services/firebaseConfig";
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState("");

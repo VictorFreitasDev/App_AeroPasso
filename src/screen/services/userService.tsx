@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, set } from "firebase/database";
 
 import { auth, database } from "../../services/firebaseConfig";
@@ -19,6 +19,16 @@ class UserService {
       );
 
     const uid = userCredential.user.uid;
+
+    if (userCredential.user) {
+      try {
+        await updateProfile(userCredential.user, {
+          displayName: nome,
+        });
+      } catch (e) {
+        console.warn("Não foi possível atualizar o displayName:", e);
+      }
+    }
 
     const usuario: UserModel = {
       id: uid,

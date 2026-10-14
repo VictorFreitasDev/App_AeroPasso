@@ -1,16 +1,18 @@
 import React from "react";
 import {
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Pressable,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
 import { signOut } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
+
+
 
 export default function DashboardScreen({
   navigation,
