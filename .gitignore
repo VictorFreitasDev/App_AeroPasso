@@ -43,3 +43,9 @@ app-example
 /android
 
 firebaseConfig.tsx
+
+# Credentials & API Configs
+src/constants/Config.tsx
+constants/Config.tsx
+Config.tsx
+
